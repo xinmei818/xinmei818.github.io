@@ -2,387 +2,605 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>多维人格测试 | 8属性深度分析</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>多维人格深度测试 | 8属性完整分析</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-body{background:#f5f7fa;padding:20px;color:#2d3748}
-.main{max-width:720px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.08);overflow:hidden}
-.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:32px 24px;text-align:center}
-.header h1{font-size:26px;margin-bottom:8px}
-.header p{font-size:15px;opacity:.95}
-.progress-bar{height:6px;background:#edf2f7}
-.progress-fill{height:100%;background:#667eea;width:0%;transition:.4s ease}
-.question-box{padding:32px 24px}
-.question-title{font-size:20px;line-height:1.6;margin-bottom:28px;color:#2d3748}
-.choices{display:grid;gap:12px}
-.choice{padding:14px 18px;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer;transition:.2s;background:#f8fafc}
-.choice:hover{border-color:#667eea;background:#edf2ff}
-.choice.active{border-color:#667eea;background:#e6e9ff;color:#553c9a;font-weight:500}
-.nav{padding:0 24px 32px;display:flex;gap:12px}
-button{padding:14px 24px;border:none;border-radius:12px;font-size:16px;cursor:pointer;flex:1;font-weight:500}
-.btn-next{background:#667eea;color:#fff}
-.btn-back{background:#e2e8f0;color:#2d3748}
-.btn-submit{background:#764ba2;color:#fff}
-.result-page{display:none;padding:32px 24px}
-.result-type{font-size:36px;font-weight:bold;color:#553c9a;margin-bottom:12px}
-.result-name{font-size:22px;margin-bottom:20px;color:#2d3748}
-.dimensions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
-.dimension{background:#f8fafc;padding:16px;border-radius:12px}
-.dim-title{font-weight:600;color:#553c9a;margin-bottom:8px}
-.dim-score{font-size:14px;color:#4a5568}
-.result-desc{line-height:1.8;font-size:16px;color:#4a5568;margin-top:20px}
-.tags{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-.tag{padding:6px 14px;background:#edf2f7;border-radius:20px;font-size:14px;color:#4a5568}
-.count{text-align:center;color:#718096;margin-bottom:16px;font-size:14px}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+  background: #f1f5f9;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 32px;
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.header {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: white;
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 15px;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #e2e8f0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  width: 0%;
+  transition: width 0.25s ease;
+}
+
+.count {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 10px 0 6px;
+  letter-spacing: 0.3px;
+}
+
+.question-box {
+  padding: 32px 28px;
+}
+
+.question-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.45;
+  margin-bottom: 28px;
+  color: #0f172a;
+}
+
+.choices {
+  display: grid;
+  gap: 12px;
+}
+
+.choice {
+  padding: 14px 20px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1e293b;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.choice:hover {
+  border-color: #818cf8;
+  background: #f5f3ff;
+  transform: translateY(-1px);
+}
+
+.choice.active {
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(99,102,241,0.12);
+}
+
+.nav {
+  padding: 8px 28px 32px;
+  display: flex;
+  gap: 14px;
+}
+
+button {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+  transition: 0.2s;
+}
+
+.btn-back {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.btn-back:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.btn-back:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-next {
+  background: #6366f1;
+  color: white;
+  box-shadow: 0 2px 6px rgba(99,102,241,0.3);
+}
+
+.btn-next:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+}
+
+.btn-submit {
+  background: #a855f7;
+  color: white;
+  box-shadow: 0 2px 8px rgba(168,85,247,0.3);
+}
+
+.btn-submit:hover {
+  background: #9333ea;
+}
+
+.result-page {
+  display: none;
+  padding: 32px 28px;
+}
+
+.result-type {
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.result-name {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+  border-left: 5px solid #a855f7;
+  padding-left: 18px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0 18px;
+}
+
+.tag {
+  background: #f1f5f9;
+  padding: 6px 16px;
+  border-radius: 40px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.dimensions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 28px 0 24px;
+}
+
+.dimension {
+  background: #f8fafc;
+  padding: 18px 16px;
+  border-radius: 24px;
+  border: 1px solid #eef2ff;
+}
+
+.dim-title {
+  font-weight: 700;
+  color: #4c1d95;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.dim-score {
+  font-size: 13px;
+  color: #475569;
+  background: #ffffffcc;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 40px;
+  margin-top: 8px;
+}
+
+.result-desc {
+  line-height: 1.7;
+  font-size: 16px;
+  color: #1e293b;
+  background: #fefce8;
+  padding: 20px 20px;
+  border-radius: 28px;
+  margin-top: 18px;
+  border: 1px solid #fef08a;
+}
+
+.restart-btn {
+  margin-top: 28px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  padding: 14px;
+  border-radius: 40px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.restart-btn:hover {
+  background: #e0e7ff;
+}
+
+@media (max-width: 550px) {
+  body { padding: 12px; }
+  .question-box { padding: 24px 20px; }
+  .question-title { font-size: 20px; }
+  .dimensions { grid-template-columns: 1fr; }
+  .result-name { font-size: 22px; }
+}
 </style>
 </head>
 <body>
-<div class="main">
+<div class="main" id="app">
   <div class="header">
     <h1>多维人格深度测试</h1>
-    <p>4大维度8属性，全面解析你的真实人格</p>
+    <p>依恋·自我·现实·自律 | 8属性精准画像</p>
   </div>
-  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-  <div class="count" id="count"></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="count" id="questionCounter"></div>
 
-  <div class="question-box" id="qbox">
-    <div class="question-title" id="title"></div>
-    <div class="choices" id="choices"></div>
+  <!-- 问卷区域 -->
+  <div id="quizPanel">
+    <div class="question-box">
+      <div class="question-title" id="questionText"></div>
+      <div class="choices" id="choicesContainer"></div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" id="prevBtn" disabled>◀ 上一题</button>
+      <button class="btn-next" id="nextBtn">下一题 ▶</button>
+    </div>
   </div>
 
-  <div class="nav">
-    <button class="btn-back" id="back" disabled>上一题</button>
-    <button class="btn-next" id="next">下一题</button>
-  </div>
-
-  <div class="result-page" id="result">
-    <div class="result-type" id="rType"></div>
-    <div class="result-name" id="rName"></div>
-    <div class="tags" id="rTags"></div>
-    <div class="dimensions" id="rDims"></div>
-    <div class="result-desc" id="rDesc"></div>
+  <!-- 结果区域 -->
+  <div id="resultPanel" class="result-page" style="display: none;">
+    <div class="result-type" id="resultTypeCode"></div>
+    <div class="result-name" id="resultTypeName"></div>
+    <div class="tags" id="resultTags"></div>
+    <div class="dimensions" id="resultDimensions"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <button class="restart-btn" id="restartTestBtn">🔄 重新测试</button>
   </div>
 </div>
 
 <script>
-// 题目配置：4大维度8属性，每题5个选项对应权重
-const questions = [
-  // 依恋类型 A/S 维度（A=焦虑型，S=安全型）
-  {
-    q: "我很害怕被伴侣/重要的人抛弃",
-    dim: "as",
-    opts: [
-      {t:"非常同意", a:2, s:0},
-      {t:"同意", a:1, s:0},
-      {t:"中立", a:0, s:0},
-      {t:"不同意", a:0, s:1},
-      {t:"非常不同意", a:0, s:2}
-    ]
-  },
-  {
-    q: "我在亲密关系中经常感到不安，需要反复确认对方的爱",
-    dim: "as",
-    opts: [
-      {t:"非常同意", a:2, s:0},
-      {t:"同意", a:1, s:0},
-      {t:"中立", a:0, s:0},
-      {t:"不同意", a:0, s:1},
-      {t:"非常不同意", a:0, s:2}
-    ]
-  },
-  {
-    q: "我能坦然接受伴侣的独立空间，不会过度黏人",
-    dim: "as",
-    opts: [
-      {t:"非常同意", a:0, s:2},
-      {t:"同意", a:0, s:1},
-      {t:"中立", a:0, s:0},
-      {t:"不同意", a:1, s:0},
-      {t:"非常不同意", a:2, s:0}
-    ]
-  },
-  {
-    q: "我在关系中很容易患得患失，担心对方不够爱自己",
-    dim: "as",
-    opts: [
-      {t:"非常同意", a:2, s:0},
-      {t:"同意", a:1, s:0},
-      {t:"中立", a:0, s:0},
-      {t:"不同意", a:0, s:1},
-      {t:"非常不同意", a:0, s:2}
-    ]
-  },
-
-  // 自我认知 D/F 维度（D=低自尊/自我否定，F=高自尊/自我认同）
-  {
-    q: "我经常觉得自己不够好，比不上别人",
-    dim: "df",
-    opts: [
-      {t:"非常同意", d:2, f:0},
-      {t:"同意", d:1, f:0},
-      {t:"中立", d:0, f:0},
-      {t:"不同意", d:0, f:1},
-      {t:"非常不同意", d:0, f:2}
-    ]
-  },
-  {
-    q: "我对自己的价值有清晰的认知，不会轻易被他人评价影响",
-    dim: "df",
-    opts: [
-      {t:"非常同意", d:0, f:2},
-      {t:"同意", d:0, f:1},
-      {t:"中立", d:0, f:0},
-      {t:"不同意", d:1, f:0},
-      {t:"非常不同意", d:2, f:0}
-    ]
-  },
-  {
-    q: "我很在意别人对我的看法，会为了讨好他人委屈自己",
-    dim: "df",
-    opts: [
-      {t:"非常同意", d:2, f:0},
-      {t:"同意", d:1, f:0},
-      {t:"中立", d:0, f:0},
-      {t:"不同意", d:0, f:1},
-      {t:"非常不同意", d:0, f:2}
-    ]
-  },
-  {
-    q: "我相信自己有能力做好大多数事情，敢于尝试新挑战",
-    dim: "df",
-    opts: [
-      {t:"非常同意", d:0, f:2},
-      {t:"同意", d:0, f:1},
-      {t:"中立", d:0, f:0},
-      {t:"不同意", d:1, f:0},
-      {t:"非常不同意", d:2, f:0}
-    ]
-  },
-
-  // 现实程度 G/H 维度（G=理想主义/脱离现实，H=现实主义/脚踏实地）
-  {
-    q: "我更相信直觉和灵感，而不是眼前的客观事实",
-    dim: "gh",
-    opts: [
-      {t:"非常同意", g:2, h:0},
-      {t:"同意", g:1, h:0},
-      {t:"中立", g:0, h:0},
-      {t:"不同意", g:0, h:1},
-      {t:"非常不同意", g:0, h:2}
-    ]
-  },
-  {
-    q: "我做决策时会优先考虑实际条件和可行性",
-    dim: "gh",
-    opts: [
-      {t:"非常同意", g:0, h:2},
-      {t:"同意", g:0, h:1},
-      {t:"中立", g:0, h:0},
-      {t:"不同意", g:1, h:0},
-      {t:"非常不同意", g:2, h:0}
-    ]
-  },
-  {
-    q: "我经常沉浸在自己的幻想中，对未来有很多不切实际的期待",
-    dim: "gh",
-    opts: [
-      {t:"非常同意", g:2, h:0},
-      {t:"同意", g:1, h:0},
-      {t:"中立", g:0, h:0},
-      {t:"不同意", g:0, h:1},
-      {t:"非常不同意", g:0, h:2}
-    ]
-  },
-  {
-    q: "我能清晰区分理想和现实，做事一步一个脚印",
-    dim: "gh",
-    opts: [
-      {t:"非常同意", g:0, h:2},
-      {t:"同意", g:0, h:1},
-      {t:"中立", g:0, h:0},
-      {t:"不同意", g:1, h:0},
-      {t:"非常不同意", g:2, h:0}
-    ]
-  },
-
-  // 自律程度 J/K 维度（J=自律型/高自控，K=随性型/低自控）
-  {
-    q: "我能严格遵守自己制定的计划，很少拖延",
-    dim: "jk",
-    opts: [
-      {t:"非常同意", j:2, k:0},
-      {t:"同意", j:1, k:0},
-      {t:"中立", j:0, k:0},
-      {t:"不同意", j:0, k:1},
-      {t:"非常不同意", j:0, k:2}
-    ]
-  },
-  {
-    q: "我经常拖延，事情不到最后一刻不会动手",
-    dim: "jk",
-    opts: [
-      {t:"非常同意", j:0, k:2},
-      {t:"同意", j:0, k:1},
-      {t:"中立", j:0, k:0},
-      {t:"不同意", j:1, k:0},
-      {t:"非常不同意", j:2, k:0}
-    ]
-  },
-  {
-    q: "我能很好地控制自己的情绪和欲望，不会冲动行事",
-    dim: "jk",
-    opts: [
-      {t:"非常同意", j:2, k:0},
-      {t:"同意", j:1, k:0},
-      {t:"中立", j:0, k:0},
-      {t:"不同意", j:0, k:1},
-      {t:"非常不同意", j:0, k:2}
-    ]
-  },
-  {
-    q: "我喜欢随性自由的生活，不喜欢被规则和计划束缚",
-    dim: "jk",
-    opts: [
-      {t:"非常同意", j:0, k:2},
-      {t:"同意", j:0, k:1},
-      {t:"中立", j:0, k:0},
-      {t:"不同意", j:1, k:0},
-      {t:"非常不同意", j:2, k:0}
-    ]
-  }
+// ======================= 题库 (4大维度8属性，每题5选项精准权重) =======================
+const QUESTIONS = [
+  // ----- 依恋维度 (A焦虑 / S安全) -----
+  { dim: "as", text: "我很害怕被伴侣/重要的人抛弃", opts: [
+    { label: "非常同意", weights: { a:2, s:0 } }, { label: "同意", weights: { a:1, s:0 } },
+    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:0, s:1 } },
+    { label: "非常不同意", weights: { a:0, s:2 } }
+  ] },
+  { dim: "as", text: "我在亲密关系中经常感到不安，需要反复确认对方的爱", opts: [
+    { label: "非常同意", weights: { a:2, s:0 } }, { label: "同意", weights: { a:1, s:0 } },
+    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:0, s:1 } },
+    { label: "非常不同意", weights: { a:0, s:2 } }
+  ] },
+  { dim: "as", text: "我能坦然接受伴侣的独立空间，不会过度黏人", opts: [
+    { label: "非常同意", weights: { a:0, s:2 } }, { label: "同意", weights: { a:0, s:1 } },
+    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:1, s:0 } },
+    { label: "非常不同意", weights: { a:2, s:0 } }
+  ] },
+  { dim: "as", text: "我在关系中很容易患得患失，担心对方不够爱自己", opts: [
+    { label: "非常同意", weights: { a:2, s:0 } }, { label: "同意", weights: { a:1, s:0 } },
+    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:0, s:1 } },
+    { label: "非常不同意", weights: { a:0, s:2 } }
+  ] },
+  // ----- 自我认知维度 (D低自尊 / F高自尊) -----
+  { dim: "df", text: "我经常觉得自己不够好，比不上别人", opts: [
+    { label: "非常同意", weights: { d:2, f:0 } }, { label: "同意", weights: { d:1, f:0 } },
+    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:0, f:1 } },
+    { label: "非常不同意", weights: { d:0, f:2 } }
+  ] },
+  { dim: "df", text: "我对自己的价值有清晰的认知，不会轻易被他人评价影响", opts: [
+    { label: "非常同意", weights: { d:0, f:2 } }, { label: "同意", weights: { d:0, f:1 } },
+    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:1, f:0 } },
+    { label: "非常不同意", weights: { d:2, f:0 } }
+  ] },
+  { dim: "df", text: "我很在意别人对我的看法，会为了讨好他人委屈自己", opts: [
+    { label: "非常同意", weights: { d:2, f:0 } }, { label: "同意", weights: { d:1, f:0 } },
+    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:0, f:1 } },
+    { label: "非常不同意", weights: { d:0, f:2 } }
+  ] },
+  { dim: "df", text: "我相信自己有能力做好大多数事情，敢于尝试新挑战", opts: [
+    { label: "非常同意", weights: { d:0, f:2 } }, { label: "同意", weights: { d:0, f:1 } },
+    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:1, f:0 } },
+    { label: "非常不同意", weights: { d:2, f:0 } }
+  ] },
+  // ----- 现实程度 (G理想主义 / H现实主义) -----
+  { dim: "gh", text: "我更相信直觉和灵感，而不是眼前的客观事实", opts: [
+    { label: "非常同意", weights: { g:2, h:0 } }, { label: "同意", weights: { g:1, h:0 } },
+    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:0, h:1 } },
+    { label: "非常不同意", weights: { g:0, h:2 } }
+  ] },
+  { dim: "gh", text: "我做决策时会优先考虑实际条件和可行性", opts: [
+    { label: "非常同意", weights: { g:0, h:2 } }, { label: "同意", weights: { g:0, h:1 } },
+    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:1, h:0 } },
+    { label: "非常不同意", weights: { g:2, h:0 } }
+  ] },
+  { dim: "gh", text: "我经常沉浸在自己的幻想中，对未来有很多不切实际的期待", opts: [
+    { label: "非常同意", weights: { g:2, h:0 } }, { label: "同意", weights: { g:1, h:0 } },
+    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:0, h:1 } },
+    { label: "非常不同意", weights: { g:0, h:2 } }
+  ] },
+  { dim: "gh", text: "我能清晰区分理想和现实，做事一步一个脚印", opts: [
+    { label: "非常同意", weights: { g:0, h:2 } }, { label: "同意", weights: { g:0, h:1 } },
+    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:1, h:0 } },
+    { label: "非常不同意", weights: { g:2, h:0 } }
+  ] },
+  // ----- 自律程度 (J自律/高自控 , K随性/低自控) -----
+  { dim: "jk", text: "我能严格遵守自己制定的计划，很少拖延", opts: [
+    { label: "非常同意", weights: { j:2, k:0 } }, { label: "同意", weights: { j:1, k:0 } },
+    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:0, k:1 } },
+    { label: "非常不同意", weights: { j:0, k:2 } }
+  ] },
+  { dim: "jk", text: "我经常拖延，事情不到最后一刻不会动手", opts: [
+    { label: "非常同意", weights: { j:0, k:2 } }, { label: "同意", weights: { j:0, k:1 } },
+    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:1, k:0 } },
+    { label: "非常不同意", weights: { j:2, k:0 } }
+  ] },
+  { dim: "jk", text: "我能很好地控制自己的情绪和欲望，不会冲动行事", opts: [
+    { label: "非常同意", weights: { j:2, k:0 } }, { label: "同意", weights: { j:1, k:0 } },
+    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:0, k:1 } },
+    { label: "非常不同意", weights: { j:0, k:2 } }
+  ] },
+  { dim: "jk", text: "我喜欢随性自由的生活，不喜欢被规则和计划束缚", opts: [
+    { label: "非常同意", weights: { j:0, k:2 } }, { label: "同意", weights: { j:0, k:1 } },
+    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:1, k:0 } },
+    { label: "非常不同意", weights: { j:2, k:0 } }
+  ] }
 ];
 
-// 16种结果类型（4维度组合）+ 详细描述
-const resultData = {
-  ASGHJK:{
-    name:"焦虑理想自律型",
-    tags:"敏感细腻,目标感强,完美主义",
-    desc:"你是内心敏感细腻的完美主义者，在亲密关系中容易焦虑不安，对自我有较高要求，充满理想主义色彩，同时拥有极强的自律性。你做事严谨认真，对自己和他人都有较高标准，容易内耗，但也能凭借超强的执行力达成目标。适合需要深度专注和细节把控的领域，需要学习放松自己，接纳不完美。"
-  },
-  ASGHJK_S:{
-    name:"安全理想自律型",
-    tags:"情绪稳定,理想主义,高度自律",
-    desc:"你是情绪稳定的理想主义者，拥有健康的依恋模式，在关系中从容自信，同时心怀远大理想，做事高度自律、有条不紊。你能平衡理想与现实，用强大的自控力追逐目标，是团队中可靠的引领者。需要注意避免过度规划，保留生活的弹性与惊喜。"
-  },
-  // 省略中间类型，直接给完整16种
-  ASGHK:{name:"焦虑理想随性型",tags:"敏感浪漫,自由散漫,创造力强",desc:"你是敏感浪漫的创造者，在关系中容易焦虑不安，充满天马行空的想象力，讨厌被规则束缚，做事随性自由。你拥有极强的创造力和共情力，适合艺术、创意类领域，但需要学习建立基本的自律，避免拖延和内耗，在亲密关系中学会信任对方。"},
-  ASHK:{name:"安全现实随性型",tags:"松弛自在,脚踏实地,乐观豁达",desc:"你是松弛自在的生活家，拥有健康的依恋模式，为人现实通透，做事随性不拖沓，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡工作与生活，是身边人的快乐源泉。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
-  DFGHJK:{name:"低自尊理想自律型",tags:"自我否定,目标明确,隐忍努力",desc:"你是隐忍努力的追光者，对自我价值认知不足，容易自我否定，却心怀理想，做事高度自律、默默努力。你习惯用忙碌掩盖不安，用完美主义证明自己，需要学习接纳自己的不完美，建立稳定的自我认同，停止内耗，相信自己的价值。"},
-  DFGHJK_F:{name:"高自尊理想自律型",tags:"自信笃定,理想远大,执行力强",desc:"你是自信笃定的追光者，拥有强大的自我认同感，心怀远大理想，做事高度自律、目标明确。你能清晰地认知自我，不受外界评价影响，用超强的执行力追逐梦想，是天生的领导者。需要注意避免过度自我，学会倾听他人的意见，平衡理想与现实。"},
-  DFGHK:{name:"低自尊理想随性型",tags:"敏感自卑,创意十足,自由散漫",desc:"你是敏感自卑的创意者，对自我价值认知不足，容易陷入自我怀疑，却拥有天马行空的想象力和创造力，讨厌被规则束缚。你需要学习建立稳定的自我认同，接纳自己的闪光点，同时培养基本的自律，避免拖延，用创意创造属于自己的价值。"},
-  DFHK:{name:"高自尊现实随性型",tags:"自信通透,松弛自由,乐观开朗",desc:"你是自信通透的生活家，拥有强大的自我认同感，为人现实豁达，做事随性自由，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡自我与他人，是身边人的精神支柱。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
-  GHJK:{name:"理想自律型",tags:"目标感强,理想主义,高度自律",desc:"你是心怀理想的实干家，充满远大抱负，做事高度自律、有条不紊，能为了目标不懈努力。你拥有极强的执行力和专注力，适合需要长期深耕的领域，需要注意平衡理想与现实，避免脱离实际，同时学会放松自己，避免过度内耗。"},
-  GHK:{name:"理想随性型",tags:"创意十足,自由散漫,浪漫主义",desc:"你是浪漫自由的创意者，充满天马行空的想象力，讨厌被规则束缚，做事随性自由。你拥有极强的创造力和共情力，适合艺术、创意类领域，需要学习建立基本的自律，避免拖延，平衡理想与现实，用创意创造属于自己的价值。"},
-  HJK:{name:"现实自律型",tags:"脚踏实地,高度自律,务实可靠",desc:"你是脚踏实地的实干家，为人现实通透，做事高度自律、有条不紊，能一步一个脚印达成目标。你是团队中最可靠的存在，适合需要细节把控和执行力的领域，需要注意避免过度务实，保留对生活的热情与想象，学会放松自己。"},
-  HK:{name:"现实随性型",tags:"松弛自在,乐观豁达,脚踏实地",desc:"你是松弛自在的生活家，为人现实通透，做事随性自由，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡工作与生活，是身边人的快乐源泉。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
-  ASJK:{name:"焦虑自律型",tags:"敏感细腻,高度自律,完美主义",desc:"你是敏感细腻的完美主义者，在亲密关系中容易焦虑不安，对自我有较高要求，做事高度自律、严谨认真。你容易内耗，但也能凭借超强的执行力达成目标，需要学习放松自己，接纳不完美，在亲密关系中学会信任对方。"},
-  ASK:{name:"焦虑随性型",tags:"敏感浪漫,自由散漫,共情力强",desc:"你是敏感浪漫的共情者，在关系中容易焦虑不安，讨厌被规则束缚，做事随性自由。你拥有极强的共情力和创造力，适合需要情感连接的领域，需要学习建立基本的自律，避免拖延和内耗，在亲密关系中学会信任对方。"},
-  DFJK:{name:"高自尊自律型",tags:"自信笃定,高度自律,目标明确",desc:"你是自信笃定的实干家，拥有强大的自我认同感，做事高度自律、目标明确，能为了目标不懈努力。你是天生的领导者，适合需要统筹规划的领域，需要注意避免过度自我，学会倾听他人的意见，平衡工作与生活。"},
-  DFK:{name:"高自尊随性型",tags:"自信通透,松弛自由,乐观开朗",desc:"你是自信通透的生活家，拥有强大的自我认同感，做事随性自由，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡自我与他人，是身边人的精神支柱。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
-  // 兜底主类型
-  ADGJ:{name:"焦虑低自尊理想自律型",tags:"敏感内耗,完美主义,隐忍努力",desc:"你是内心敏感的完美主义者，在关系中焦虑不安，自我价值感低，却心怀理想、高度自律，习惯用忙碌掩盖不安。你需要学习接纳自己，建立稳定的自我认同，停止内耗，在关系中学会信任，平衡理想与现实，活出真正的自己。"},
-  SFHK:{name:"安全高自尊现实随性型",tags:"松弛自信,通透豁达,乐观自在",desc:"你是通透豁达的生活家，拥有健康的依恋模式和强大的自我认同感，为人现实、随性自由，享受当下的每一刻。你情绪稳定，待人真诚，是身边人的快乐源泉，能很好地平衡生活的方方面面，活成了大多数人羡慕的样子。"}
+// ======================= 完整16型人格数据库 (4维度2^4=16种，每种都有详细描述) =======================
+const RESULT_DB = {
+  // 依恋-自我-现实-自律  (A焦虑 S安全) (D低自尊 F高自尊) (G理想 H现实) (J自律 K随性)
+  "ADGJ": { name: "焦虑·低自尊·理想·自律型", tags: "敏感内耗,完美主义,隐忍克制", desc: "内心充满不安与自我怀疑，却用理想主义驱动，用高度自律掩盖脆弱。你习惯把焦虑转化成拼命努力，但容易陷入「永远不够好」的循环。需要学会自我慈悲，接纳平凡，允许自己放松。" },
+  "ADGK": { name: "焦虑·低自尊·理想·随性型", tags: "浪漫脆弱,创意敏感,自由散漫", desc: "焦虑型依恋与低自我价值感交织，理想主义让你沉浸于精神世界，随性使你厌恶束缚。你富有艺术天赋和共情力，但容易拖延逃避，需练习小目标落地与自我肯定。" },
+  "ADHJ": { name: "焦虑·低自尊·现实·自律型", tags: "务实内耗,细节控,隐忍努力", desc: "你脚踏实地但又过度担忧，自律是为求得外界认可。害怕失败，做事极其靠谱，但内心常感疲惫。学习放松标准，信任自己的价值不依赖成就。" },
+  "ADHK": { name: "焦虑·低自尊·现实·随性型", tags: "随波逐流,敏感现实,回避压力", desc: "你在现实中容易感到无力，用随性逃避焦虑。虽能适应环境，但缺乏稳定内核。逐步建立微小自信和计划，会活得更踏实。" },
+  "AFGJ": { name: "焦虑·高自尊·理想·自律型", tags: "雄心勃勃,敏感进取,浪漫驱动", desc: "你对自己能力自信，但关系中容易焦虑；用理想与自律追求卓越。既渴望深度连接，又要求自己完美。需平衡亲密关系中的安全感，学习信任。" },
+  "AFGK": { name: "焦虑·高自尊·理想·随性型", tags: "自信浪漫,创意爆棚,自由灵魂", desc: "高自尊让你相信自己的独特，但依恋焦虑带来情感波动；理想主义和随性使你充满灵气。适合艺术创作，但需要学会情感落地与自律小习惯。" },
+  "AFHJ": { name: "焦虑·高自尊·现实·自律型", tags: "高效实干,情感细腻,目标清晰", desc: "你既有自信又务实，用自律达成目标，但在乎亲密关系反馈。你是高功能焦虑者，事业出色但内心易患得患失。练习正念放松，关系里多沟通。" },
+  "AFHK": { name: "焦虑·高自尊·现实·随性型", tags: "灵活敏锐,自信随和,现实享受", desc: "你对自己认可，处事灵活，但关系中容易担忧。喜欢按自己节奏生活，适应力强。适度关注伴侣需求，可以拥有温暖平衡的关系。" },
+  "SDGJ": { name: "安全·低自尊·理想·自律型", tags: "温柔隐忍,理想主义者,自律奉献", desc: "你依恋模式安全但自我评价偏低，内心有远大理想却常自我怀疑。温和而勤奋，容易为他人付出。需要建立自我认同，看见自己的光芒。" },
+  "SDGK": { name: "安全·低自尊·理想·随性型", tags: "随性浪漫,自我怀疑,温和创意", desc: "你情绪稳定，人际关系和谐，但内心常觉不足；喜欢理想化生活，做事随缘。提升自信可以让你潜力爆发，从微小成就感开始。" },
+  "SDHJ": { name: "安全·低自尊·现实·自律型", tags: "可靠勤奋,自我批判,务实求稳", desc: "你让人感到安心，对自己要求严格，踏实肯干但低估自己。你是团队基石，学习欣赏自己的贡献，不必过度谦虚。" },
+  "SDHK": { name: "安全·低自尊·现实·随性型", tags: "随和包容,缺乏野心,活在当下", desc: "你安全感足、随遇而安，但常低估自己价值。性格讨喜，满足于简单快乐。尝试小挑战可增强内在力量，发现更大可能性。" },
+  "SFGJ": { name: "安全·高自尊·理想·自律型", tags: "自信笃定,理想远航,高度自律", desc: "健康的依恋，强大的自我认同，心怀星辰大海，行动力极强。你是天生的领袖与开拓者，注意偶尔放松，拥抱不完美的浪漫。" },
+  "SFGK": { name: "安全·高自尊·理想·随性型", tags: "自信自由,浪漫豁达,灵感充沛", desc: "你内心安全，自信从容，理想主义却不强求，随性而有创意。活得潇洒自在，是身边人的小太阳。适当增加条理性会让才华更持久。" },
+  "SFHJ": { name: "安全·高自尊·现实·自律型", tags: "通透实干,稳重强大,目标王者", desc: "情绪稳定，认知清晰，务实自律，你是现实世界里的顶级选手。既能仰望星空又能脚踏实地，注意别太紧绷，享受过程。" },
+  "SFHK": { name: "安全·高自尊·现实·随性型", tags: "松弛自信,豁达通透,人生玩家", desc: "你拥有最理想的人格底色：安全感充足，自我认可，现实灵活，随性自由。情绪稳定又乐观，懂得享受生活，是很多人羡慕的状态。保持好奇，感染他人。" }
 };
 
-// 维度配置
-const dimConfig = {
-  as: {name:"依恋类型", a:"焦虑型(A)", s:"安全型(S)"},
-  df: {name:"自我认知", d:"低自尊(D)", f:"高自尊(F)"},
-  gh: {name:"现实程度", g:"理想主义(G)", h:"现实主义(H)"},
-  jk: {name:"自律程度", j:"自律型(J)", k:"随性型(K)"}
+// 辅助: 维度代码映射 (用于最终确定字母)
+const DIM_KEYS = {
+  as: { left: 'a', right: 's', leftCode: 'A', rightCode: 'S' },
+  df: { left: 'd', right: 'f', leftCode: 'D', rightCode: 'F' },
+  gh: { left: 'g', right: 'h', leftCode: 'G', rightCode: 'H' },
+  jk: { left: 'j', right: 'k', leftCode: 'J', rightCode: 'K' }
 };
 
-let current = 0
-let answers = Array(questions.length).fill(null)
-let score = {a:0,s:0,d:0,f:0,g:0,h:0,j:0,k:0}
+// 全局状态
+let userAnswers = new Array(QUESTIONS.length).fill(null);   // 存储每道题选择的索引
+let currentIndex = 0;
+let scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
 
-const el = (id)=>document.getElementById(id)
-function render(){
-  const q = questions[current]
-  el("title").innerText = `${current+1}. ${q.q}`
-  el("count").innerText = `${current+1}/${questions.length}`
-  el("progress").style.width = (current+1)/questions.length*100 + '%'
-  const c = el("choices")
-  c.innerHTML = ''
-  q.a.forEach((opt,i)=>{
-    let div = document.createElement('div')
-    div.className = 'choice'
-    if(answers[current] === i) div.classList.add('active')
-    div.innerText = opt.t
-    div.onclick = ()=>{
-      answers[current] = i
-      render()
+// DOM 元素
+const quizPanel = document.getElementById('quizPanel');
+const resultPanel = document.getElementById('resultPanel');
+const questionTextEl = document.getElementById('questionText');
+const choicesContainer = document.getElementById('choicesContainer');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressFill = document.getElementById('progressFill');
+const questionCounter = document.getElementById('questionCounter');
+
+// ========== 核心函数：根据userAnswers实时计算总分 ==========
+function recalcTotalScores() {
+  // 重置分数
+  scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const selectedIdx = userAnswers[i];
+    if (selectedIdx === null) continue;
+    const q = QUESTIONS[i];
+    const selectedOpt = q.opts[selectedIdx];
+    if (!selectedOpt || !selectedOpt.weights) continue;
+    const weights = selectedOpt.weights;
+    for (let [attr, val] of Object.entries(weights)) {
+      if (scoreMap[attr] !== undefined) scoreMap[attr] += val;
     }
-    c.appendChild(div)
-  })
-  el("back").disabled = current === 0
-  el("next").innerText = current === questions.length-1 ? "提交测试" : "下一题"
+  }
 }
 
-el("next").onclick = ()=>{
-  if(answers[current]==null)return alert("请选择一个选项")
-  const opt = questions[current].a[answers[current]]
-  for(let k in opt){
-    if(k!='t')score[k]+=opt[k]
-  }
-  if(current < questions.length-1){
-    current++
-    render()
-  }else{
-    calc()
-    el("qbox").style.display = "none"
-    el("result").style.display = "block"
-    document.querySelector(".nav").style.display = "none"
-  }
+// 根据当前分数获取四维度字母组合 (A/S, D/F, G/H, J/K)
+function getPersonalityCode() {
+  const asCode = scoreMap.a > scoreMap.s ? 'A' : (scoreMap.s > scoreMap.a ? 'S' : (scoreMap.a === scoreMap.s ? (Math.random()<0.5 ? 'A':'S') : 'S'));
+  const dfCode = scoreMap.d > scoreMap.f ? 'D' : (scoreMap.f > scoreMap.d ? 'F' : (Math.random()<0.5 ? 'D':'F'));
+  const ghCode = scoreMap.g > scoreMap.h ? 'G' : (scoreMap.h > scoreMap.g ? 'H' : (Math.random()<0.5 ? 'G':'H'));
+  const jkCode = scoreMap.j > scoreMap.k ? 'J' : (scoreMap.k > scoreMap.j ? 'K' : (Math.random()<0.5 ? 'J':'K'));
+  return asCode + dfCode + ghCode + jkCode;
 }
-el("back").onclick = ()=>{
-  if(current>0){
-    // 回退时撤销上一题的分数
-    const lastOpt = questions[current-1].a[answers[current-1]]
-    for(let k in lastOpt){
-      if(k!='t')score[k]-=lastOpt[k]
+
+// 渲染当前题目 (高亮已选)
+function renderCurrentQuestion() {
+  const q = QUESTIONS[currentIndex];
+  questionTextEl.innerText = `${currentIndex+1}. ${q.text}`;
+  const selectedIdx = userAnswers[currentIndex];
+  choicesContainer.innerHTML = '';
+  q.opts.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'choice';
+    if (selectedIdx === idx) div.classList.add('active');
+    div.innerText = opt.label;
+    div.addEventListener('click', () => {
+      // 更新答案
+      userAnswers[currentIndex] = idx;
+      recalcTotalScores();    // 实时重算总分
+      renderCurrentQuestion(); // 刷新高亮
+      updateProgressAndCounter();
+    });
+    choicesContainer.appendChild(div);
+  });
+  updateProgressAndCounter();
+  prevBtn.disabled = (currentIndex === 0);
+  const isLast = currentIndex === QUESTIONS.length - 1;
+  nextBtn.innerText = isLast ? "✨ 提交测试" : "下一题 →";
+}
+
+function updateProgressAndCounter() {
+  const answeredCount = userAnswers.filter(a => a !== null).length;
+  const percent = (answeredCount / QUESTIONS.length) * 100;
+  progressFill.style.width = `${percent}%`;
+  questionCounter.innerText = `${answeredCount}/${QUESTIONS.length} 已答`;
+}
+
+// 提交并展示结果
+function showResult() {
+  // 确保所有题目都已选 (前端强制)
+  for (let i = 0; i < userAnswers.length; i++) {
+    if (userAnswers[i] === null) {
+      alert(`请先完成第 ${i+1} 题后再提交～`);
+      currentIndex = i;
+      renderCurrentQuestion();
+      return false;
     }
-    current--
-    render()
   }
-}
-
-function calc(){
-  // 计算每个维度的最终字母
-  let as = score.a > score.s ? 'A' : 'S'
-  let df = score.d > score.f ? 'D' : 'F'
-  let gh = score.g > score.h ? 'G' : 'H'
-  let jk = score.j > score.k ? 'J' : 'K'
-  let type = as + df + gh + jk
-
-  // 生成维度展示
-  const dims = [
-    {name:dimConfig.as.name, res:as === 'A' ? dimConfig.as.a : dimConfig.as.s, score:`A:${score.a} / S:${score.s}`},
-    {name:dimConfig.df.name, res:df === 'D' ? dimConfig.df.d : dimConfig.df.f, score:`D:${score.d} / F:${score.f}`},
-    {name:dimConfig.gh.name, res:gh === 'G' ? dimConfig.gh.g : dimConfig.gh.h, score:`G:${score.g} / H:${score.h}`},
-    {name:dimConfig.jk.name, res:jk === 'J' ? dimConfig.jk.j : dimConfig.jk.k, score:`J:${score.j} / K:${score.k}`}
-  ]
-  let dimHtml = ''
-  dims.forEach(d=>{
+  recalcTotalScores();  // 最终总分
+  const typeCode = getPersonalityCode();
+  const personality = RESULT_DB[typeCode] || RESULT_DB["SFHK"]; // 兜底为安全高自尊现实随性型
+  
+  // 填充结果界面
+  document.getElementById('resultTypeCode').innerText = `${typeCode} · 人格编码`;
+  document.getElementById('resultTypeName').innerText = personality.name;
+  document.getElementById('resultDesc').innerText = personality.desc;
+  const tagsHtml = personality.tags.split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('');
+  document.getElementById('resultTags').innerHTML = tagsHtml;
+  
+  // 维度详情
+  const dimsDetail = [
+    { name: "依恋类型", leftScore: scoreMap.a, rightScore: scoreMap.s, leftLabel: "焦虑型(A)", rightLabel: "安全型(S)", final: scoreMap.a > scoreMap.s ? "焦虑型(A)" : (scoreMap.s > scoreMap.a ? "安全型(S)" : "平衡型") },
+    { name: "自我认知", leftScore: scoreMap.d, rightScore: scoreMap.f, leftLabel: "低自尊(D)", rightLabel: "高自尊(F)", final: scoreMap.d > scoreMap.f ? "低自尊(D)" : (scoreMap.f > scoreMap.d ? "高自尊(F)" : "均衡型") },
+    { name: "现实程度", leftScore: scoreMap.g, rightScore: scoreMap.h, leftLabel: "理想主义(G)", rightLabel: "现实主义(H)", final: scoreMap.g > scoreMap.h ? "理想主义(G)" : (scoreMap.h > scoreMap.g ? "现实主义(H)" : "理想与现实平衡") },
+    { name: "自律程度", leftScore: scoreMap.j, rightScore: scoreMap.k, leftLabel: "自律型(J)", rightLabel: "随性型(K)", final: scoreMap.j > scoreMap.k ? "自律型(J)" : (scoreMap.k > scoreMap.j ? "随性型(K)" : "灵活中庸") }
+  ];
+  let dimHtml = '';
+  dimsDetail.forEach(d => {
     dimHtml += `
-    <div class="dimension">
-      <div class="dim-title">${d.name}：${d.res}</div>
-      <div class="dim-score">${d.score}</div>
-    </div>`
-  })
-  el("rDims").innerHTML = dimHtml
-
-  // 匹配结果
-  let res = resultData[type] || resultData[as+df+gh] || resultData[as+df] || resultData.SFHK
-  el("rType").innerText = type
-  el("rName").innerText = res.name
-  el("rDesc").innerText = res.desc
-  let tags = res.tags.split(',').map(t=>`<span class="tag">${t}</span>`).join('')
-  el("rTags").innerHTML = tags
+      <div class="dimension">
+        <div class="dim-title">${d.name} · ${d.final}</div>
+        <div class="dim-score">${d.leftLabel} ${d.leftScore} ｜ ${d.rightLabel} ${d.rightScore}</div>
+      </div>
+    `;
+  });
+  document.getElementById('resultDimensions').innerHTML = dimHtml;
+  
+  // 切换显示
+  quizPanel.style.display = 'none';
+  resultPanel.style.display = 'block';
+  return true;
 }
 
-render()
+// 重置测试 (重新开始)
+function resetTest() {
+  userAnswers = new Array(QUESTIONS.length).fill(null);
+  currentIndex = 0;
+  scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
+  quizPanel.style.display = 'block';
+  resultPanel.style.display = 'none';
+  renderCurrentQuestion();
+}
+
+// 事件绑定
+function bindEvents() {
+  nextBtn.addEventListener('click', () => {
+    // 检查当前题目是否已选
+    if (userAnswers[currentIndex] === null) {
+      alert("请先选择当前题目的选项～");
+      return;
+    }
+    if (currentIndex === QUESTIONS.length - 1) {
+      // 最后一题并且有答案 -> 提交
+      const allDone = userAnswers.every(v => v !== null);
+      if (!allDone) {
+        alert("还有题目未完成，请返回作答～");
+        return;
+      }
+      showResult();
+    } else {
+      currentIndex++;
+      renderCurrentQuestion();
+    }
+  });
+  
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      renderCurrentQuestion();
+    }
+  });
+  
+  document.getElementById('restartTestBtn')?.addEventListener('click', () => {
+    resetTest();
+  });
+}
+
+// 初始化
+function init() {
+  bindEvents();
+  renderCurrentQuestion();
+}
+
+init();
 </script>
 </body>
 </html>
