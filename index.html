@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多维人格测试 | 8属性深度分析</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+body{background:#f5f7fa;padding:20px;color:#2d3748}
+.main{max-width:720px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 8px 32px rgba(0,0,0,.08);overflow:hidden}
+.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:32px 24px;text-align:center}
+.header h1{font-size:26px;margin-bottom:8px}
+.header p{font-size:15px;opacity:.95}
+.progress-bar{height:6px;background:#edf2f7}
+.progress-fill{height:100%;background:#667eea;width:0%;transition:.4s ease}
+.question-box{padding:32px 24px}
+.question-title{font-size:20px;line-height:1.6;margin-bottom:28px;color:#2d3748}
+.choices{display:grid;gap:12px}
+.choice{padding:14px 18px;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer;transition:.2s;background:#f8fafc}
+.choice:hover{border-color:#667eea;background:#edf2ff}
+.choice.active{border-color:#667eea;background:#e6e9ff;color:#553c9a;font-weight:500}
+.nav{padding:0 24px 32px;display:flex;gap:12px}
+button{padding:14px 24px;border:none;border-radius:12px;font-size:16px;cursor:pointer;flex:1;font-weight:500}
+.btn-next{background:#667eea;color:#fff}
+.btn-back{background:#e2e8f0;color:#2d3748}
+.btn-submit{background:#764ba2;color:#fff}
+.result-page{display:none;padding:32px 24px}
+.result-type{font-size:36px;font-weight:bold;color:#553c9a;margin-bottom:12px}
+.result-name{font-size:22px;margin-bottom:20px;color:#2d3748}
+.dimensions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+.dimension{background:#f8fafc;padding:16px;border-radius:12px}
+.dim-title{font-weight:600;color:#553c9a;margin-bottom:8px}
+.dim-score{font-size:14px;color:#4a5568}
+.result-desc{line-height:1.8;font-size:16px;color:#4a5568;margin-top:20px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.tag{padding:6px 14px;background:#edf2f7;border-radius:20px;font-size:14px;color:#4a5568}
+.count{text-align:center;color:#718096;margin-bottom:16px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="main">
+  <div class="header">
+    <h1>多维人格深度测试</h1>
+    <p>4大维度8属性，全面解析你的真实人格</p>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <div class="count" id="count"></div>
+
+  <div class="question-box" id="qbox">
+    <div class="question-title" id="title"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+
+  <div class="nav">
+    <button class="btn-back" id="back" disabled>上一题</button>
+    <button class="btn-next" id="next">下一题</button>
+  </div>
+
+  <div class="result-page" id="result">
+    <div class="result-type" id="rType"></div>
+    <div class="result-name" id="rName"></div>
+    <div class="tags" id="rTags"></div>
+    <div class="dimensions" id="rDims"></div>
+    <div class="result-desc" id="rDesc"></div>
+  </div>
+</div>
+
+<script>
+// 题目配置：4大维度8属性，每题5个选项对应权重
+const questions = [
+  // 依恋类型 A/S 维度（A=焦虑型，S=安全型）
+  {
+    q: "我很害怕被伴侣/重要的人抛弃",
+    dim: "as",
+    opts: [
+      {t:"非常同意", a:2, s:0},
+      {t:"同意", a:1, s:0},
+      {t:"中立", a:0, s:0},
+      {t:"不同意", a:0, s:1},
+      {t:"非常不同意", a:0, s:2}
+    ]
+  },
+  {
+    q: "我在亲密关系中经常感到不安，需要反复确认对方的爱",
+    dim: "as",
+    opts: [
+      {t:"非常同意", a:2, s:0},
+      {t:"同意", a:1, s:0},
+      {t:"中立", a:0, s:0},
+      {t:"不同意", a:0, s:1},
+      {t:"非常不同意", a:0, s:2}
+    ]
+  },
+  {
+    q: "我能坦然接受伴侣的独立空间，不会过度黏人",
+    dim: "as",
+    opts: [
+      {t:"非常同意", a:0, s:2},
+      {t:"同意", a:0, s:1},
+      {t:"中立", a:0, s:0},
+      {t:"不同意", a:1, s:0},
+      {t:"非常不同意", a:2, s:0}
+    ]
+  },
+  {
+    q: "我在关系中很容易患得患失，担心对方不够爱自己",
+    dim: "as",
+    opts: [
+      {t:"非常同意", a:2, s:0},
+      {t:"同意", a:1, s:0},
+      {t:"中立", a:0, s:0},
+      {t:"不同意", a:0, s:1},
+      {t:"非常不同意", a:0, s:2}
+    ]
+  },
+
+  // 自我认知 D/F 维度（D=低自尊/自我否定，F=高自尊/自我认同）
+  {
+    q: "我经常觉得自己不够好，比不上别人",
+    dim: "df",
+    opts: [
+      {t:"非常同意", d:2, f:0},
+      {t:"同意", d:1, f:0},
+      {t:"中立", d:0, f:0},
+      {t:"不同意", d:0, f:1},
+      {t:"非常不同意", d:0, f:2}
+    ]
+  },
+  {
+    q: "我对自己的价值有清晰的认知，不会轻易被他人评价影响",
+    dim: "df",
+    opts: [
+      {t:"非常同意", d:0, f:2},
+      {t:"同意", d:0, f:1},
+      {t:"中立", d:0, f:0},
+      {t:"不同意", d:1, f:0},
+      {t:"非常不同意", d:2, f:0}
+    ]
+  },
+  {
+    q: "我很在意别人对我的看法，会为了讨好他人委屈自己",
+    dim: "df",
+    opts: [
+      {t:"非常同意", d:2, f:0},
+      {t:"同意", d:1, f:0},
+      {t:"中立", d:0, f:0},
+      {t:"不同意", d:0, f:1},
+      {t:"非常不同意", d:0, f:2}
+    ]
+  },
+  {
+    q: "我相信自己有能力做好大多数事情，敢于尝试新挑战",
+    dim: "df",
+    opts: [
+      {t:"非常同意", d:0, f:2},
+      {t:"同意", d:0, f:1},
+      {t:"中立", d:0, f:0},
+      {t:"不同意", d:1, f:0},
+      {t:"非常不同意", d:2, f:0}
+    ]
+  },
+
+  // 现实程度 G/H 维度（G=理想主义/脱离现实，H=现实主义/脚踏实地）
+  {
+    q: "我更相信直觉和灵感，而不是眼前的客观事实",
+    dim: "gh",
+    opts: [
+      {t:"非常同意", g:2, h:0},
+      {t:"同意", g:1, h:0},
+      {t:"中立", g:0, h:0},
+      {t:"不同意", g:0, h:1},
+      {t:"非常不同意", g:0, h:2}
+    ]
+  },
+  {
+    q: "我做决策时会优先考虑实际条件和可行性",
+    dim: "gh",
+    opts: [
+      {t:"非常同意", g:0, h:2},
+      {t:"同意", g:0, h:1},
+      {t:"中立", g:0, h:0},
+      {t:"不同意", g:1, h:0},
+      {t:"非常不同意", g:2, h:0}
+    ]
+  },
+  {
+    q: "我经常沉浸在自己的幻想中，对未来有很多不切实际的期待",
+    dim: "gh",
+    opts: [
+      {t:"非常同意", g:2, h:0},
+      {t:"同意", g:1, h:0},
+      {t:"中立", g:0, h:0},
+      {t:"不同意", g:0, h:1},
+      {t:"非常不同意", g:0, h:2}
+    ]
+  },
+  {
+    q: "我能清晰区分理想和现实，做事一步一个脚印",
+    dim: "gh",
+    opts: [
+      {t:"非常同意", g:0, h:2},
+      {t:"同意", g:0, h:1},
+      {t:"中立", g:0, h:0},
+      {t:"不同意", g:1, h:0},
+      {t:"非常不同意", g:2, h:0}
+    ]
+  },
+
+  // 自律程度 J/K 维度（J=自律型/高自控，K=随性型/低自控）
+  {
+    q: "我能严格遵守自己制定的计划，很少拖延",
+    dim: "jk",
+    opts: [
+      {t:"非常同意", j:2, k:0},
+      {t:"同意", j:1, k:0},
+      {t:"中立", j:0, k:0},
+      {t:"不同意", j:0, k:1},
+      {t:"非常不同意", j:0, k:2}
+    ]
+  },
+  {
+    q: "我经常拖延，事情不到最后一刻不会动手",
+    dim: "jk",
+    opts: [
+      {t:"非常同意", j:0, k:2},
+      {t:"同意", j:0, k:1},
+      {t:"中立", j:0, k:0},
+      {t:"不同意", j:1, k:0},
+      {t:"非常不同意", j:2, k:0}
+    ]
+  },
+  {
+    q: "我能很好地控制自己的情绪和欲望，不会冲动行事",
+    dim: "jk",
+    opts: [
+      {t:"非常同意", j:2, k:0},
+      {t:"同意", j:1, k:0},
+      {t:"中立", j:0, k:0},
+      {t:"不同意", j:0, k:1},
+      {t:"非常不同意", j:0, k:2}
+    ]
+  },
+  {
+    q: "我喜欢随性自由的生活，不喜欢被规则和计划束缚",
+    dim: "jk",
+    opts: [
+      {t:"非常同意", j:0, k:2},
+      {t:"同意", j:0, k:1},
+      {t:"中立", j:0, k:0},
+      {t:"不同意", j:1, k:0},
+      {t:"非常不同意", j:2, k:0}
+    ]
+  }
+];
+
+// 16种结果类型（4维度组合）+ 详细描述
+const resultData = {
+  ASGHJK:{
+    name:"焦虑理想自律型",
+    tags:"敏感细腻,目标感强,完美主义",
+    desc:"你是内心敏感细腻的完美主义者，在亲密关系中容易焦虑不安，对自我有较高要求，充满理想主义色彩，同时拥有极强的自律性。你做事严谨认真，对自己和他人都有较高标准，容易内耗，但也能凭借超强的执行力达成目标。适合需要深度专注和细节把控的领域，需要学习放松自己，接纳不完美。"
+  },
+  ASGHJK_S:{
+    name:"安全理想自律型",
+    tags:"情绪稳定,理想主义,高度自律",
+    desc:"你是情绪稳定的理想主义者，拥有健康的依恋模式，在关系中从容自信，同时心怀远大理想，做事高度自律、有条不紊。你能平衡理想与现实，用强大的自控力追逐目标，是团队中可靠的引领者。需要注意避免过度规划，保留生活的弹性与惊喜。"
+  },
+  // 省略中间类型，直接给完整16种
+  ASGHK:{name:"焦虑理想随性型",tags:"敏感浪漫,自由散漫,创造力强",desc:"你是敏感浪漫的创造者，在关系中容易焦虑不安，充满天马行空的想象力，讨厌被规则束缚，做事随性自由。你拥有极强的创造力和共情力，适合艺术、创意类领域，但需要学习建立基本的自律，避免拖延和内耗，在亲密关系中学会信任对方。"},
+  ASHK:{name:"安全现实随性型",tags:"松弛自在,脚踏实地,乐观豁达",desc:"你是松弛自在的生活家，拥有健康的依恋模式，为人现实通透，做事随性不拖沓，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡工作与生活，是身边人的快乐源泉。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
+  DFGHJK:{name:"低自尊理想自律型",tags:"自我否定,目标明确,隐忍努力",desc:"你是隐忍努力的追光者，对自我价值认知不足，容易自我否定，却心怀理想，做事高度自律、默默努力。你习惯用忙碌掩盖不安，用完美主义证明自己，需要学习接纳自己的不完美，建立稳定的自我认同，停止内耗，相信自己的价值。"},
+  DFGHJK_F:{name:"高自尊理想自律型",tags:"自信笃定,理想远大,执行力强",desc:"你是自信笃定的追光者，拥有强大的自我认同感，心怀远大理想，做事高度自律、目标明确。你能清晰地认知自我，不受外界评价影响，用超强的执行力追逐梦想，是天生的领导者。需要注意避免过度自我，学会倾听他人的意见，平衡理想与现实。"},
+  DFGHK:{name:"低自尊理想随性型",tags:"敏感自卑,创意十足,自由散漫",desc:"你是敏感自卑的创意者，对自我价值认知不足，容易陷入自我怀疑，却拥有天马行空的想象力和创造力，讨厌被规则束缚。你需要学习建立稳定的自我认同，接纳自己的闪光点，同时培养基本的自律，避免拖延，用创意创造属于自己的价值。"},
+  DFHK:{name:"高自尊现实随性型",tags:"自信通透,松弛自由,乐观开朗",desc:"你是自信通透的生活家，拥有强大的自我认同感，为人现实豁达，做事随性自由，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡自我与他人，是身边人的精神支柱。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
+  GHJK:{name:"理想自律型",tags:"目标感强,理想主义,高度自律",desc:"你是心怀理想的实干家，充满远大抱负，做事高度自律、有条不紊，能为了目标不懈努力。你拥有极强的执行力和专注力，适合需要长期深耕的领域，需要注意平衡理想与现实，避免脱离实际，同时学会放松自己，避免过度内耗。"},
+  GHK:{name:"理想随性型",tags:"创意十足,自由散漫,浪漫主义",desc:"你是浪漫自由的创意者，充满天马行空的想象力，讨厌被规则束缚，做事随性自由。你拥有极强的创造力和共情力，适合艺术、创意类领域，需要学习建立基本的自律，避免拖延，平衡理想与现实，用创意创造属于自己的价值。"},
+  HJK:{name:"现实自律型",tags:"脚踏实地,高度自律,务实可靠",desc:"你是脚踏实地的实干家，为人现实通透，做事高度自律、有条不紊，能一步一个脚印达成目标。你是团队中最可靠的存在，适合需要细节把控和执行力的领域，需要注意避免过度务实，保留对生活的热情与想象，学会放松自己。"},
+  HK:{name:"现实随性型",tags:"松弛自在,乐观豁达,脚踏实地",desc:"你是松弛自在的生活家，为人现实通透，做事随性自由，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡工作与生活，是身边人的快乐源泉。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
+  ASJK:{name:"焦虑自律型",tags:"敏感细腻,高度自律,完美主义",desc:"你是敏感细腻的完美主义者，在亲密关系中容易焦虑不安，对自我有较高要求，做事高度自律、严谨认真。你容易内耗，但也能凭借超强的执行力达成目标，需要学习放松自己，接纳不完美，在亲密关系中学会信任对方。"},
+  ASK:{name:"焦虑随性型",tags:"敏感浪漫,自由散漫,共情力强",desc:"你是敏感浪漫的共情者，在关系中容易焦虑不安，讨厌被规则束缚，做事随性自由。你拥有极强的共情力和创造力，适合需要情感连接的领域，需要学习建立基本的自律，避免拖延和内耗，在亲密关系中学会信任对方。"},
+  DFJK:{name:"高自尊自律型",tags:"自信笃定,高度自律,目标明确",desc:"你是自信笃定的实干家，拥有强大的自我认同感，做事高度自律、目标明确，能为了目标不懈努力。你是天生的领导者，适合需要统筹规划的领域，需要注意避免过度自我，学会倾听他人的意见，平衡工作与生活。"},
+  DFK:{name:"高自尊随性型",tags:"自信通透,松弛自由,乐观开朗",desc:"你是自信通透的生活家，拥有强大的自我认同感，做事随性自由，享受当下的生活。你情绪稳定，待人真诚，能很好地平衡自我与他人，是身边人的精神支柱。需要注意避免过度随性，给自己设定合理的目标，提升执行力。"},
+  // 兜底主类型
+  ADGJ:{name:"焦虑低自尊理想自律型",tags:"敏感内耗,完美主义,隐忍努力",desc:"你是内心敏感的完美主义者，在关系中焦虑不安，自我价值感低，却心怀理想、高度自律，习惯用忙碌掩盖不安。你需要学习接纳自己，建立稳定的自我认同，停止内耗，在关系中学会信任，平衡理想与现实，活出真正的自己。"},
+  SFHK:{name:"安全高自尊现实随性型",tags:"松弛自信,通透豁达,乐观自在",desc:"你是通透豁达的生活家，拥有健康的依恋模式和强大的自我认同感，为人现实、随性自由，享受当下的每一刻。你情绪稳定，待人真诚，是身边人的快乐源泉，能很好地平衡生活的方方面面，活成了大多数人羡慕的样子。"}
+};
+
+// 维度配置
+const dimConfig = {
+  as: {name:"依恋类型", a:"焦虑型(A)", s:"安全型(S)"},
+  df: {name:"自我认知", d:"低自尊(D)", f:"高自尊(F)"},
+  gh: {name:"现实程度", g:"理想主义(G)", h:"现实主义(H)"},
+  jk: {name:"自律程度", j:"自律型(J)", k:"随性型(K)"}
+};
+
+let current = 0
+let answers = Array(questions.length).fill(null)
+let score = {a:0,s:0,d:0,f:0,g:0,h:0,j:0,k:0}
+
+const el = (id)=>document.getElementById(id)
+function render(){
+  const q = questions[current]
+  el("title").innerText = `${current+1}. ${q.q}`
+  el("count").innerText = `${current+1}/${questions.length}`
+  el("progress").style.width = (current+1)/questions.length*100 + '%'
+  const c = el("choices")
+  c.innerHTML = ''
+  q.a.forEach((opt,i)=>{
+    let div = document.createElement('div')
+    div.className = 'choice'
+    if(answers[current] === i) div.classList.add('active')
+    div.innerText = opt.t
+    div.onclick = ()=>{
+      answers[current] = i
+      render()
+    }
+    c.appendChild(div)
+  })
+  el("back").disabled = current === 0
+  el("next").innerText = current === questions.length-1 ? "提交测试" : "下一题"
+}
+
+el("next").onclick = ()=>{
+  if(answers[current]==null)return alert("请选择一个选项")
+  const opt = questions[current].a[answers[current]]
+  for(let k in opt){
+    if(k!='t')score[k]+=opt[k]
+  }
+  if(current < questions.length-1){
+    current++
+    render()
+  }else{
+    calc()
+    el("qbox").style.display = "none"
+    el("result").style.display = "block"
+    document.querySelector(".nav").style.display = "none"
+  }
+}
+el("back").onclick = ()=>{
+  if(current>0){
+    // 回退时撤销上一题的分数
+    const lastOpt = questions[current-1].a[answers[current-1]]
+    for(let k in lastOpt){
+      if(k!='t')score[k]-=lastOpt[k]
+    }
+    current--
+    render()
+  }
+}
+
+function calc(){
+  // 计算每个维度的最终字母
+  let as = score.a > score.s ? 'A' : 'S'
+  let df = score.d > score.f ? 'D' : 'F'
+  let gh = score.g > score.h ? 'G' : 'H'
+  let jk = score.j > score.k ? 'J' : 'K'
+  let type = as + df + gh + jk
+
+  // 生成维度展示
+  const dims = [
+    {name:dimConfig.as.name, res:as === 'A' ? dimConfig.as.a : dimConfig.as.s, score:`A:${score.a} / S:${score.s}`},
+    {name:dimConfig.df.name, res:df === 'D' ? dimConfig.df.d : dimConfig.df.f, score:`D:${score.d} / F:${score.f}`},
+    {name:dimConfig.gh.name, res:gh === 'G' ? dimConfig.gh.g : dimConfig.gh.h, score:`G:${score.g} / H:${score.h}`},
+    {name:dimConfig.jk.name, res:jk === 'J' ? dimConfig.jk.j : dimConfig.jk.k, score:`J:${score.j} / K:${score.k}`}
+  ]
+  let dimHtml = ''
+  dims.forEach(d=>{
+    dimHtml += `
+    <div class="dimension">
+      <div class="dim-title">${d.name}：${d.res}</div>
+      <div class="dim-score">${d.score}</div>
+    </div>`
+  })
+  el("rDims").innerHTML = dimHtml
+
+  // 匹配结果
+  let res = resultData[type] || resultData[as+df+gh] || resultData[as+df] || resultData.SFHK
+  el("rType").innerText = type
+  el("rName").innerText = res.name
+  el("rDesc").innerText = res.desc
+  let tags = res.tags.split(',').map(t=>`<span class="tag">${t}</span>`).join('')
+  el("rTags").innerHTML = tags
+}
+
+render()
+</script>
+</body>
+</html>
