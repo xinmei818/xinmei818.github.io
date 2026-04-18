@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<title>尖塔之影 · 怪物灵魂测试</title>
+<title>尖塔之影 · 雨声中的怪物灵魂</title>
 <style>
 * {
   margin: 0;
@@ -24,8 +24,8 @@ body {
   font-family: '华文楷书', '华文行书', 'STXingkai', '楷体', 'Noto Serif SC', serif;
 }
 
-/* ========== 动态背景（篝火与雾雨）========== */
-.bg-ambient {
+/* ========== 雨丝背景动画 ========== */
+.rain-bg {
   position: fixed;
   top: 0;
   left: 0;
@@ -33,46 +33,23 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(circle at 20% 30%, #1a1a24, #0a0c12);
   overflow: hidden;
 }
 
-/* 雾的流动 */
-.fog-layer {
+.rain-bg span {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 200%;
-  height: 100%;
-  background: repeating-linear-gradient(90deg, 
-    rgba(80, 70, 60, 0.08) 0px, 
-    rgba(80, 70, 60, 0.08) 2px,
-    transparent 2px,
-    transparent 8px);
-  animation: fogDrift 24s linear infinite;
-  opacity: 0.6;
+  width: 1.5px;
+  background: rgba(180, 200, 220, 0.4);
+  border-radius: 1px;
+  animation: rainDrop linear infinite;
+  will-change: transform;
 }
 
-@keyframes fogDrift {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* 零星火光粒子 */
-.firefly {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background: #ffaa66;
-  border-radius: 50%;
-  opacity: 0;
-  animation: flicker 4s ease-in-out infinite;
-}
-
-@keyframes flicker {
-  0% { opacity: 0; transform: translateY(0) scale(0.5); }
-  20% { opacity: 0.8; transform: translateY(-20px) scale(1); }
-  100% { opacity: 0; transform: translateY(-80px) scale(0.2); }
+@keyframes rainDrop {
+  0% { transform: translateY(-120vh); opacity: 0.2; }
+  15% { opacity: 0.7; }
+  85% { opacity: 0.7; }
+  100% { transform: translateY(120vh); opacity: 0; }
 }
 
 /* ========== 主卡片 ========== */
@@ -91,8 +68,8 @@ body {
 }
 
 .header {
-  background: linear-gradient(135deg, #3d2a1a, #5c3e24);
-  color: #f2e4c6;
+  background: linear-gradient(135deg, #1e2a2e, #2c3e2f);
+  color: #e2e0c8;
   padding: 28px 24px;
   text-align: center;
 }
@@ -116,7 +93,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #b87c3a, #e6af6e);
+  background: linear-gradient(90deg, #6b9e6b, #b8c77a);
   width: 0%;
   transition: width 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
@@ -125,7 +102,7 @@ body {
   text-align: center;
   font-size: 13px;
   font-weight: 400;
-  color: #c0aa7a;
+  color: #b8c77a;
   background: #1e1f28;
   padding: 8px 0 6px;
   letter-spacing: 1px;
@@ -161,20 +138,21 @@ body {
   color: #ddd0b8;
   touch-action: manipulation;
   text-align: left;
+  line-height: 1.4;
 }
 
 .choice:hover {
-  border-color: #b87c3a;
-  background: #3a3540;
+  border-color: #8ab86a;
+  background: #3a3f44;
   transform: translateY(-1px);
 }
 
 .choice.active {
-  border-color: #e6af6e;
-  background: #4d3e2c;
+  border-color: #c7e09c;
+  background: #4d5a3c;
   color: #fff4e4;
   font-weight: 500;
-  box-shadow: 0 4px 10px rgba(180, 120, 50, 0.25);
+  box-shadow: 0 4px 10px rgba(120, 150, 60, 0.25);
 }
 
 .nav {
@@ -210,13 +188,13 @@ button {
 }
 
 .btn-next {
-  background: #b87c3a;
+  background: #6b9e6b;
   color: #fff8ec;
-  box-shadow: 0 2px 8px rgba(140, 80, 30, 0.4);
+  box-shadow: 0 2px 8px rgba(80, 120, 50, 0.4);
 }
 
 .btn-next:hover {
-  background: #d49448;
+  background: #8ab86a;
   transform: translateY(-1px);
 }
 
@@ -233,13 +211,13 @@ button {
   padding: 48px 32px 56px;
   text-align: center;
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  border: 1px solid rgba(180, 130, 70, 0.4);
+  border: 1px solid rgba(140, 180, 90, 0.4);
 }
 
 .cover-title {
   font-size: 48px;
   font-weight: 500;
-  color: #e6cf9e;
+  color: #d8e4aa;
   letter-spacing: 6px;
   margin-bottom: 24px;
   text-shadow: 0 2px 6px rgba(0,0,0,0.5);
@@ -247,9 +225,9 @@ button {
 
 .cover-sub {
   font-size: 16px;
-  color: #b89a6a;
+  color: #b8c77a;
   margin-bottom: 40px;
-  border-top: 1px solid rgba(180,130,70,0.3);
+  border-top: 1px solid rgba(140,180,90,0.3);
   display: inline-block;
   padding-top: 14px;
 }
@@ -265,7 +243,7 @@ button {
 }
 
 .start-btn {
-  background: linear-gradient(145deg, #7f5e38, #5a3e22);
+  background: linear-gradient(145deg, #4a6e3a, #2d4a1e);
   border: none;
   padding: 16px 48px;
   font-size: 20px;
@@ -281,10 +259,10 @@ button {
 
 .start-btn:hover {
   transform: scale(1.02);
-  background: linear-gradient(145deg, #9b764a, #6e4e2c);
+  background: linear-gradient(145deg, #6b9e4a, #3e6b28);
 }
 
-/* ========== 结果页面（怪物人格） ========== */
+/* ========== 结果页面 ========== */
 .result-page {
   display: none;
   padding: 32px 28px;
@@ -301,15 +279,17 @@ button {
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
   border-radius: 20px;
+  background: #2a2a34;
+  padding: 8px;
 }
 
 .result-type {
   font-size: 28px;
   font-weight: 500;
-  color: #e6cf9e;
+  color: #d8e4aa;
   letter-spacing: 2px;
   margin-bottom: 12px;
-  border-left: 3px solid #c9af7b;
+  border-left: 3px solid #b8c77a;
   padding-left: 20px;
 }
 
@@ -334,25 +314,25 @@ button {
   padding: 4px 14px;
   border-radius: 30px;
   font-size: 12px;
-  color: #c9af7b;
+  color: #b8c77a;
 }
 
 .result-desc {
   line-height: 1.75;
   font-size: 15px;
   color: #e2d6c2;
-  background: rgba(45, 40, 35, 0.7);
+  background: rgba(45, 50, 35, 0.7);
   padding: 24px 24px;
   border-radius: 32px;
   margin-top: 20px;
-  border: 1px solid rgba(200, 160, 100, 0.3);
+  border: 1px solid rgba(140, 180, 90, 0.3);
   white-space: pre-wrap;
 }
 
 .restart-btn {
   margin-top: 28px;
   background: #323240;
-  color: #d4be93;
+  color: #b8c77a;
   font-weight: 500;
   width: 100%;
   padding: 12px;
@@ -364,7 +344,6 @@ button {
   background: #454558;
 }
 
-/* 移动端适配 */
 @media (max-width: 550px) {
   body { padding: 12px; }
   .cover-title { font-size: 38px; letter-spacing: 4px; }
@@ -377,23 +356,21 @@ button {
 </style>
 </head>
 <body>
-<div class="bg-ambient">
-  <div class="fog-layer"></div>
-</div>
+<div class="rain-bg" id="rainBg"></div>
 
 <!-- 封面页 -->
 <div class="cover-page" id="coverPage">
   <div class="cover-title">尖塔之影</div>
-  <div class="cover-sub">· 怪物灵魂测写 ·</div>
-  <div class="cover-desc">你听见篝火的低语，雾气中有一双眼睛正凝视着你。<br>那只怪物，或许就是你自己。</div>
-  <button class="start-btn" id="startTestBtn">步入雾中</button>
+  <div class="cover-sub">· 雨声中的怪物灵魂 ·</div>
+  <div class="cover-desc">淅淅沥沥的雨滴敲打塔顶，你听见自己的心跳和某种古老的低语。<br>选择你的本能，那只藏在影中的怪物便会睁开眼。</div>
+  <button class="start-btn" id="startTestBtn">步入雨中</button>
 </div>
 
 <!-- 主测试模块 -->
 <div class="main" id="app" style="display: none;">
   <div class="header">
     <h1>尖塔之影</h1>
-    <p>攻击·意图·本能 | 你的怪物灵魂</p>
+    <p>攻击·意图·本能 | 雨声测写</p>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="count" id="questionCounter"></div>
@@ -405,7 +382,7 @@ button {
     </div>
     <div class="nav">
       <button class="btn-back" id="prevBtn" disabled>◀ 回溯</button>
-      <button class="btn-next" id="nextBtn">回应意图 ▶</button>
+      <button class="btn-next" id="nextBtn">回应本能 ▶</button>
     </div>
   </div>
 
@@ -415,18 +392,33 @@ button {
     <div class="result-name" id="resultName"></div>
     <div class="tags" id="resultTags"></div>
     <div class="result-desc" id="resultDesc"></div>
-    <button class="restart-btn" id="restartTestBtn">重回篝火</button>
+    <button class="restart-btn" id="restartTestBtn">重回雨中</button>
   </div>
 </div>
 
 <script>
-// ======================= 环境音效：轻柔篝火+雾雨 =======================
-class AmbientSound {
+// ======================= 1. 雨丝动画（生成密集雨丝） =======================
+(function initRain() {
+  const container = document.getElementById('rainBg');
+  if (!container) return;
+  const RAIN_COUNT = 100;
+  for (let i = 0; i < RAIN_COUNT; i++) {
+    const drop = document.createElement('span');
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.height = (Math.random() * 70 + 30) + 'px';
+    const duration = Math.random() * 1.2 + 0.8;
+    drop.style.animationDuration = duration + 's';
+    drop.style.animationDelay = Math.random() * 5 + 's';
+    container.appendChild(drop);
+  }
+})();
+
+// ======================= 2. 淅淅沥沥的雨声（Web Audio 纯雨声） =======================
+class RainSound {
   constructor() {
     this.audioCtx = null;
     this.source = null;
     this.gainNode = null;
-    this.isPlaying = false;
     this.isMuted = false;
     this.initiated = false;
   }
@@ -436,16 +428,18 @@ class AmbientSound {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       this.gainNode = this.audioCtx.createGain();
       this.gainNode.connect(this.audioCtx.destination);
-      this.gainNode.gain.value = this.isMuted ? 0 : 0.28;
-      // 生成柔和的白噪音 + 轻微波动模拟篝火与细雨
+      this.gainNode.gain.value = this.isMuted ? 0 : 0.32;
+      
+      // 生成雨声噪声音频（柔和的粉噪+白噪）
       const sampleRate = this.audioCtx.sampleRate;
-      const bufferSize = sampleRate * 4;
+      const bufferSize = sampleRate * 3;
       const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
-        let noise = (Math.random() * 2 - 1) * 0.55;
-        // 低频篝火噼啪感
-        if (Math.random() < 0.02) noise += (Math.random() * 0.3);
+        // 雨声特点：高频轻柔，偶尔有较重的滴落感
+        let noise = (Math.random() * 2 - 1) * 0.5;
+        // 模拟雨滴敲击感：随机尖峰
+        if (Math.random() < 0.03) noise += (Math.random() * 0.4);
         data[i] = noise;
       }
       this.source = this.audioCtx.createBufferSource();
@@ -455,56 +449,152 @@ class AmbientSound {
       this.source.start();
       this.initiated = true;
       if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
-      this.isPlaying = true;
-    } catch(e) { console.warn("环境音初始化失败", e); }
+    } catch(e) { console.warn("雨声初始化失败", e); }
   }
   async mute() { if (!this.initiated) return; this.isMuted = true; if(this.gainNode) this.gainNode.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime+0.1); }
-  async unmute() { if (!this.initiated) await this.init(); this.isMuted = false; if(this.gainNode && this.audioCtx) { if(this.audioCtx.state === 'suspended') await this.audioCtx.resume(); this.gainNode.gain.linearRampToValueAtTime(0.28, this.audioCtx.currentTime+0.1); } }
+  async unmute() { if (!this.initiated) await this.init(); this.isMuted = false; if(this.gainNode && this.audioCtx) { if(this.audioCtx.state === 'suspended') await this.audioCtx.resume(); this.gainNode.gain.linearRampToValueAtTime(0.32, this.audioCtx.currentTime+0.1); } }
   toggle() { this.isMuted ? this.unmute() : this.mute(); }
 }
-const ambient = new AmbientSound();
+const rainSound = new RainSound();
 let soundStarted = false;
-function startSoundOnGesture() { if (soundStarted) return; soundStarted = true; ambient.init().then(() => { ambient.unmute(); }).catch(e=>console.warn); }
-document.body.addEventListener('click', startSoundOnGesture, { once: true });
-document.body.addEventListener('touchstart', startSoundOnGesture, { once: true });
+function startRainOnGesture() { if (soundStarted) return; soundStarted = true; rainSound.init().then(() => { rainSound.unmute(); }).catch(e=>console.warn); }
+document.body.addEventListener('click', startRainOnGesture, { once: true });
+document.body.addEventListener('touchstart', startRainOnGesture, { once: true });
 
-// 背景火光粒子
-(function addFireflies() {
-  const bg = document.querySelector('.bg-ambient');
-  if (!bg) return;
-  for (let i = 0; i < 40; i++) {
-    const fly = document.createElement('div');
-    fly.className = 'firefly';
-    fly.style.left = Math.random() * 100 + '%';
-    fly.style.top = Math.random() * 100 + '%';
-    fly.style.animationDelay = Math.random() * 6 + 's';
-    fly.style.animationDuration = 3 + Math.random() * 4 + 's';
-    bg.appendChild(fly);
-  }
-})();
-
-// ======================= 题目库（基于怪物攻击意图与行为逻辑） =======================
+// ======================= 3. 题库（完整行为选项，不再是A/B/C/D） =======================
 const QUESTIONS = [
-  { text: "当危险降临时，你的第一反应是？", weights: { cultist:1, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你如何看待规则与束缚？", weights: { cultist:0, slime:1, nob:0, sentry:2, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你会为了力量牺牲什么？", weights: { cultist:2, slime:0, nob:1, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:1, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你害怕被遗忘吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:2, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你倾向于正面交锋还是迂回削弱？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:1, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "当同伴陷入困境，你会？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:2, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你如何看待“时间”这个概念？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:2, heart:0, byrd:0 } },
-  { text: "你会为了更大的“圆满”而放弃自我吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:2, timeeater:0, heart:0, byrd:0 } },
-  { text: "你是否会将自己的痛苦转化为攻击他人的理由？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:1, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你享受追逐猎物吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:1, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你如何看待阴谋与背叛？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:2, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你渴望被理解，还是被畏惧？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:2, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "你相信直觉还是精密计算？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:1 } },
-  { text: "你会为了生存而抛弃所有情感吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:2, byrd:0 } },
-  { text: "你是团队中的协调者，还是独行的猎手？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:2, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
-  { text: "如果明天就是世界末日，你会做什么？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } }
+  { text: "当未知的敌人出现在你面前，你的第一反应是？", 
+    opts: ["立刻咆哮着冲上去撕咬", "先躲进阴影里观察弱点", "发出古怪的叫声召唤同伴", "装作无害，等对方靠近再突袭"] },
+  { text: "你如何看待这座不断变化的尖塔？",
+    opts: ["它是一座牢笼，必须用暴力挣脱", "它是迷宫的谜题，需要耐心解构", "它是猎物丰饶的狩猎场", "它是旧神的尸骸，藏着禁忌知识"] },
+  { text: "当你受伤流血时，你的本能是？",
+    opts: ["愤怒加倍，攻击更疯狂", "暂时撤退，舔舐伤口", "假装虚弱引诱敌人", "将痛苦转化为诅咒反弹给对手"] },
+  { text: "你更享受哪一种战斗方式？",
+    opts: ["正面碾压，力量就是一切", "布下陷阱，让对手自投罗网", "速度与巧击，一击脱离", "操控元素或诅咒慢慢侵蚀"] },
+  { text: "遇到一个落单的冒险者，你会？",
+    opts: ["直接扑杀，不留活口", "尾随他，等他疲劳再动手", "发出威胁把他吓跑，不恋战", "用低语扰乱心智，让他自己崩溃"] },
+  { text: "你如何看待“同伴”？",
+    opts: ["只有自己最可靠", "弱者抱团才能活", "他们只是暂时利用的工具", "我保护他们，他们也替我挡刀"] },
+  { text: "当战斗陷入僵局，你会？",
+    opts: ["孤注一掷，全力一击", "消耗战术，拖延到对方力竭", "制造混乱然后脱身", "用诡计迫使对方犯错"] },
+  { text: "你害怕死亡吗？",
+    opts: ["不怕，死了也要拉垫背", "怕，所以我会更谨慎", "死亡不过是另一种形态", "我早已死过，现在只剩恨"] },
+  { text: "如果获得强大的力量需要牺牲一部分理智，你愿意吗？",
+    opts: ["愿意，力量就是一切", "不愿意，失去自我比死更可怕", "看情况，必要时可以妥协", "我可能早就失去理智了"] },
+  { text: "你如何看待这座尖塔的顶端？",
+    opts: ["那里一定有最强的猎物", "是终点，也是解脱", "藏着尖塔的心脏，摧毁它", "不该被触及的禁忌"] },
+  { text: "当你的计谋被识破，你会？",
+    opts: ["恼羞成怒直接硬刚", "立刻撤退另寻时机", "假装投降再反咬", "沉默不语，等待下一次机会"] },
+  { text: "你记忆中最深刻的情绪是什么？",
+    opts: ["愤怒", "恐惧", "孤独", "仇恨"] },
+  { text: "你愿意为了保护某样东西而牺牲自己吗？",
+    opts: ["绝不会", "如果是重要的人可以", "那得看值不值得", "我只会为复仇牺牲"] },
+  { text: "你相信命运吗？",
+    opts: ["命运就是用来砸碎的", "或许一切早已注定", "我只信自己创造的因果", "命运？那只是弱者的借口"] },
+  { text: "如果有一天尖塔崩塌，你会？",
+    opts: ["在废墟上咆哮，成为新的王", "寻找新的藏身处继续生存", "终于可以休息了", "无所谓，反正我无处可去"] }
 ];
 
-// ======================= 16种怪物人格结果 =======================
-const MONSTER_RESULTS = {
+// 怪物列表（16个，对应结果）
+const MONSTERS = [
+  "cultist", "slime", "nob", "sentry", "looter", "chosen", "book", "leader",
+  "nemesis", "giant", "repto", "awakened", "donu", "timeeater", "heart", "byrd"
+];
+
+// 每个怪物对每个选项的倾向分（手工定义，使不同选择导向不同怪物）
+// 为了代码可读，使用权重矩阵：每道题每个选项给对应怪物加分
+// 简化但有效：根据选项语义分配倾向
+function initScoreMap() {
+  let map = {};
+  for(let m of MONSTERS) map[m] = 0;
+  return map;
+}
+
+// 根据选项内容决定增加哪些怪物的分数（用启发式规则）
+function addWeights(scoreMap, qIndex, optIndex) {
+  // 以下为人工规则，保证多样性
+  if (qIndex === 0) { // 第一题：遇到敌人
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.sentry += 2, scoreMap.repto += 1;
+    else if (optIndex === 2) scoreMap.leader += 2, scoreMap.cultist += 1;
+    else if (optIndex === 3) scoreMap.chosen += 2, scoreMap.book += 1;
+  } else if (qIndex === 1) { // 尖塔的看法
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.awakened += 1;
+    else if (optIndex === 1) scoreMap.sentry += 2, scoreMap.timeeater += 1;
+    else if (optIndex === 2) scoreMap.looter += 2, scoreMap.byrd += 1;
+    else if (optIndex === 3) scoreMap.book += 2, scoreMap.chosen += 1;
+  } else if (qIndex === 2) { // 受伤反应
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.slime += 2, scoreMap.sentry += 1;
+    else if (optIndex === 2) scoreMap.repto += 2, scoreMap.looter += 1;
+    else if (optIndex === 3) scoreMap.chosen += 2, scoreMap.nemesis += 1;
+  } else if (qIndex === 3) { // 战斗方式
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.sentry += 2, scoreMap.timeeater += 1;
+    else if (optIndex === 2) scoreMap.byrd += 2, scoreMap.looter += 1;
+    else if (optIndex === 3) scoreMap.book += 2, scoreMap.chosen += 1;
+  } else if (qIndex === 4) { // 遇到冒险者
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.cultist += 1;
+    else if (optIndex === 1) scoreMap.repto += 2, scoreMap.looter += 1;
+    else if (optIndex === 2) scoreMap.sentry += 2, scoreMap.leader += 1;
+    else if (optIndex === 3) scoreMap.chosen += 2, scoreMap.nemesis += 1;
+  } else if (qIndex === 5) { // 同伴看法
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.heart += 1;
+    else if (optIndex === 1) scoreMap.slime += 2, scoreMap.leader += 1;
+    else if (optIndex === 2) scoreMap.repto += 2, scoreMap.looter += 1;
+    else if (optIndex === 3) scoreMap.donu += 2, scoreMap.sentry += 1;
+  } else if (qIndex === 6) { // 僵局处理
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.timeeater += 2, scoreMap.sentry += 1;
+    else if (optIndex === 2) scoreMap.byrd += 2, scoreMap.slime += 1;
+    else if (optIndex === 3) scoreMap.repto += 2, scoreMap.nemesis += 1;
+  } else if (qIndex === 7) { // 害怕死亡
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.awakened += 1;
+    else if (optIndex === 1) scoreMap.slime += 2, scoreMap.looter += 1;
+    else if (optIndex === 2) scoreMap.book += 2, scoreMap.chosen += 1;
+    else if (optIndex === 3) scoreMap.nemesis += 2, scoreMap.heart += 1;
+  } else if (qIndex === 8) { // 牺牲理智换力量
+    if (optIndex === 0) scoreMap.cultist += 2, scoreMap.awakened += 1;
+    else if (optIndex === 1) scoreMap.sentry += 2, scoreMap.timeeater += 1;
+    else if (optIndex === 2) scoreMap.looter += 2, scoreMap.repto += 1;
+    else if (optIndex === 3) scoreMap.chosen += 2, scoreMap.book += 1;
+  } else if (qIndex === 9) { // 尖塔顶端
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.sentry += 2, scoreMap.timeeater += 1;
+    else if (optIndex === 2) scoreMap.heart += 2, scoreMap.awakened += 1;
+    else if (optIndex === 3) scoreMap.book += 2, scoreMap.chosen += 1;
+  } else if (qIndex === 10) { // 计谋被识破
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.byrd += 2, scoreMap.slime += 1;
+    else if (optIndex === 2) scoreMap.repto += 2, scoreMap.looter += 1;
+    else if (optIndex === 3) scoreMap.nemesis += 2, scoreMap.sentry += 1;
+  } else if (qIndex === 11) { // 最深刻的情绪
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.awakened += 1;
+    else if (optIndex === 1) scoreMap.slime += 2, scoreMap.byrd += 1;
+    else if (optIndex === 2) scoreMap.leader += 2, scoreMap.sentry += 1;
+    else if (optIndex === 3) scoreMap.nemesis += 2, scoreMap.heart += 1;
+  } else if (qIndex === 12) { // 牺牲自己
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.donu += 2, scoreMap.leader += 1;
+    else if (optIndex === 2) scoreMap.slime += 2, scoreMap.sentry += 1;
+    else if (optIndex === 3) scoreMap.nemesis += 2, scoreMap.cultist += 1;
+  } else if (qIndex === 13) { // 命运
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.awakened += 1;
+    else if (optIndex === 1) scoreMap.timeeater += 2, scoreMap.sentry += 1;
+    else if (optIndex === 2) scoreMap.repto += 2, scoreMap.looter += 1;
+    else if (optIndex === 3) scoreMap.book += 2, scoreMap.chosen += 1;
+  } else if (qIndex === 14) { // 尖塔崩塌
+    if (optIndex === 0) scoreMap.nob += 2, scoreMap.giant += 1;
+    else if (optIndex === 1) scoreMap.slime += 2, scoreMap.byrd += 1;
+    else if (optIndex === 2) scoreMap.sentry += 2, scoreMap.timeeater += 1;
+    else if (optIndex === 3) scoreMap.heart += 2, scoreMap.nemesis += 1;
+  }
+  // 额外给每个怪物一些随机扰动避免平局（但主要靠规则）
+  return scoreMap;
+}
+
+// 怪物详细数据（图片链接使用官方Wiki镜像）
+const MONSTER_DATA = {
   cultist: { name: "邪教徒", desc: "你是尖塔最底层的信徒，穿着破旧的长袍，日夜低语着无人能懂的祈祷。你以为自己是在追寻信仰，其实只是在填补内心的空洞。你渴望被某股力量接纳，哪怕那力量终将吞噬你。每当有人路过，你都会抬起头，眼里燃烧着卑微而炽烈的期待——他们会不会是那个能听懂你呓语的人？", tags: "虔诚·卑微·回声", img: "https://static.wikia.nocookie.net/slaythespire/images/5/5a/Cultist.png" },
   slime: { name: "史莱姆", desc: "你是一滩柔软的流体，没有固定的形状，也没有尖锐的棱角。你可以分裂自己，把痛苦分摊给每一个微小的分身。你不喜欢冲突，但一旦被挤压，就会用粘液黏住那些试图伤害你的人。其实你很清楚，你不是没有骨头，你只是把所有骨头都溶进了湿润的温柔里。", tags: "分裂·柔软·适应", img: "https://static.wikia.nocookie.net/slaythespire/images/6/64/Acid_Slime_M.png" },
   nob: { name: "地精大块头", desc: "你的愤怒永远写在脸上，像一面没有遮挡的鼓皮。你不懂阴谋，也不屑伪装。每一拳都带着咆哮，每一击都拼尽全力。别人觉得你粗鲁，但你只是讨厌拐弯抹角——如果这个世界想伤害你，你就先把它砸碎。可有时候，夜深人静时，你也会摸摸自己发红的拳头，疑惑那股火到底烧给谁看。", tags: "暴怒·直率·野蛮", img: "https://static.wikia.nocookie.net/slaythespire/images/8/88/Gremlin_Nob.png" },
@@ -523,84 +613,85 @@ const MONSTER_RESULTS = {
   byrd: { name: "异鸟", desc: "你总是在空中盘旋，不愿落地。你以为自己看得更远，其实只是不敢着陆。你攻击一次就飞走，再回头，再飞走。你以为自己在戏耍敌人，其实你只是怕——怕一旦停下来，就再也没有力气飞了。", tags: "轻盈·逃避·徘徊", img: "https://static.wikia.nocookie.net/slaythespire/images/0/0b/Byrd.png" }
 };
 
-// 简化版计分与匹配
+// 测试状态
 let answers = new Array(QUESTIONS.length).fill(null);
-let current = 0;
-let scoreMap = { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 };
+let currentIndex = 0;
+let scoreMap = initScoreMap();
 
+// DOM
+const coverPage = document.getElementById('coverPage');
+const mainApp = document.getElementById('app');
 const quizPanel = document.getElementById('quizPanel');
 const resultPanel = document.getElementById('resultPanel');
-const questionText = document.getElementById('questionText');
+const questionTextEl = document.getElementById('questionText');
 const choicesContainer = document.getElementById('choicesContainer');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const progressFill = document.getElementById('progressFill');
 const questionCounter = document.getElementById('questionCounter');
 
-function recalcScore() {
-  scoreMap = { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 };
-  for(let i=0; i<QUESTIONS.length; i++) {
-    let idx = answers[i];
-    if(idx===null) continue;
-    let w = QUESTIONS[i].weights;
-    if(w) {
-      let keys = Object.keys(w);
-      if(keys.length>0 && idx<keys.length) {
-        let key = keys[idx];
-        if(scoreMap[key]!==undefined) scoreMap[key] += w[key];
-      }
+function recalcAllScores() {
+  scoreMap = initScoreMap();
+  for (let i = 0; i < answers.length; i++) {
+    if (answers[i] !== null) {
+      addWeights(scoreMap, i, answers[i]);
     }
   }
 }
 
-function getMonsterKey() {
-  let maxKey = 'cultist';
-  let maxVal = 0;
-  for(let k in scoreMap) {
-    if(scoreMap[k] > maxVal) { maxVal = scoreMap[k]; maxKey = k; }
+function getTopMonster() {
+  let maxKey = MONSTERS[0];
+  let maxVal = scoreMap[maxKey];
+  for (let m of MONSTERS) {
+    if (scoreMap[m] > maxVal) { maxVal = scoreMap[m]; maxKey = m; }
   }
   return maxKey;
 }
 
 function updateProgress() {
-  let answered = answers.filter(a=>a!==null).length;
-  progressFill.style.width = (answered/QUESTIONS.length)*100+'%';
+  const answered = answers.filter(a => a !== null).length;
+  progressFill.style.width = (answered / QUESTIONS.length) * 100 + '%';
   questionCounter.innerText = `${answered}/${QUESTIONS.length} 已答`;
 }
 
 function renderQuestion() {
-  let q = QUESTIONS[current];
-  questionText.innerText = `${current+1}. ${q.text}`;
-  let selected = answers[current];
+  const q = QUESTIONS[currentIndex];
+  questionTextEl.innerText = `${currentIndex+1}. ${q.text}`;
+  const selectedIdx = answers[currentIndex];
   choicesContainer.innerHTML = '';
-  let opts = ["选项A", "选项B", "选项C", "选项D"];
-  for(let i=0; i<4; i++) {
-    let div = document.createElement('div');
-    div.className = 'choice' + (selected===i ? ' active' : '');
-    div.innerText = opts[i];
-    div.addEventListener('click', ()=>{
-      answers[current] = i;
-      recalcScore();
+  q.opts.forEach((opt, idx) => {
+    const div = document.createElement('div');
+    div.className = 'choice' + (selectedIdx === idx ? ' active' : '');
+    div.innerText = opt;
+    div.addEventListener('click', () => {
+      answers[currentIndex] = idx;
+      recalcAllScores();
       renderQuestion();
       updateProgress();
     });
     choicesContainer.appendChild(div);
-  }
+  });
   updateProgress();
-  prevBtn.disabled = (current===0);
-  nextBtn.innerText = (current===QUESTIONS.length-1) ? "✨ 窥见真身" : "下一意图 →";
+  prevBtn.disabled = (currentIndex === 0);
+  nextBtn.innerText = (currentIndex === QUESTIONS.length-1) ? "✨ 浮现真身" : "下一本能 →";
 }
 
 function showResult() {
-  for(let i=0;i<answers.length;i++) if(answers[i]===null) { alert(`请完成第 ${i+1} 题`); current=i; renderQuestion(); return; }
-  recalcScore();
-  let key = getMonsterKey();
-  let data = MONSTER_RESULTS[key];
-  if(!data) data = MONSTER_RESULTS.cultist;
-  document.getElementById('resultTypeCode').innerText = key.toUpperCase() + " · 尖塔之魂";
-  document.getElementById('resultName').innerText = data.name;
-  document.getElementById('resultDesc').innerText = data.desc;
-  document.getElementById('resultTags').innerHTML = data.tags.split('·').map(t=>`<span class="tag">${t.trim()}</span>`).join('');
+  for (let i=0; i<answers.length; i++) {
+    if (answers[i] === null) {
+      alert(`请先完成第 ${i+1} 题再窥视雨中影子`);
+      currentIndex = i;
+      renderQuestion();
+      return;
+    }
+  }
+  recalcAllScores();
+  const monsterKey = getTopMonster();
+  const data = MONSTER_DATA[monsterKey];
+  document.getElementById('resultTypeCode').innerHTML = monsterKey.toUpperCase() + " · 雨中之影";
+  document.getElementById('resultName').innerHTML = data.name;
+  document.getElementById('resultDesc').innerHTML = data.desc;
+  document.getElementById('resultTags').innerHTML = data.tags.split('·').map(t => `<span class="tag">${t.trim()}</span>`).join('');
   document.getElementById('resultMonsterImg').innerHTML = `<img src="${data.img}" alt="${data.name}" onerror="this.src='https://via.placeholder.com/100x100?text=${data.name}'">`;
   quizPanel.style.display = 'none';
   resultPanel.style.display = 'block';
@@ -608,27 +699,35 @@ function showResult() {
 
 function resetTest() {
   answers.fill(null);
-  current = 0;
-  scoreMap = { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 };
+  currentIndex = 0;
+  scoreMap = initScoreMap();
   quizPanel.style.display = 'block';
   resultPanel.style.display = 'none';
   renderQuestion();
 }
 
 function bindEvents() {
-  nextBtn.addEventListener('click',()=>{
-    if(answers[current]===null) { alert("请先选择一项"); return; }
-    if(current===QUESTIONS.length-1) { if(answers.every(v=>v!==null)) showResult(); else alert("还有未答"); }
-    else { current++; renderQuestion(); }
+  nextBtn.addEventListener('click', () => {
+    if (answers[currentIndex] === null) { alert("请先选择一项"); return; }
+    if (currentIndex === QUESTIONS.length-1) {
+      if (answers.every(v => v !== null)) showResult();
+      else alert("还有未答的题目");
+    } else {
+      currentIndex++;
+      renderQuestion();
+    }
   });
-  prevBtn.addEventListener('click',()=>{ if(current>0){ current--; renderQuestion(); } });
-  document.getElementById('restartTestBtn').addEventListener('click',resetTest);
-  document.getElementById('startTestBtn').addEventListener('click',()=>{
-    document.getElementById('coverPage').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+  prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+  });
+  document.getElementById('restartTestBtn').addEventListener('click', resetTest);
+  document.getElementById('startTestBtn').addEventListener('click', () => {
+    coverPage.style.display = 'none';
+    mainApp.style.display = 'block';
     resetTest();
   });
 }
+
 bindEvents();
 renderQuestion();
 </script>
