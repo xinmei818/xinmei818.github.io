@@ -3,17 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<title>多维人格深度测试 | 8属性完整分析</title>
+<title>去往哪里 · 人格灰域测试</title>
 <style>
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent; /* 去除移动端点击灰层 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 瘦金体风格字体栈 — 优先使用华文楷书、瘦金体风格 */
+body, button, .choice, .question-title, .result-name, .result-desc, .header h1, .header p, .tag, .dim-title {
+  font-family: '华文楷书', '华文行书', 'STXingkai', '楷体', 'Microsoft YaHei', 'KaiTi', 'Noto Serif SC', serif;
 }
 
 body {
-  background: #1a1a1f;
+  background: #0e0e12;
   padding: 20px;
   min-height: 100vh;
   display: flex;
@@ -21,10 +26,9 @@ body {
   justify-content: center;
   position: relative;
   overflow-x: hidden;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/* ========== 雨丝下落背景（性能优化版：数量减少+will-change） ========== */
+/* ========== 雨丝背景 ========== */
 .rain-bg {
   position: fixed;
   top: 0;
@@ -39,84 +43,140 @@ body {
 .rain-bg span {
   position: absolute;
   width: 1.5px;
-  background: rgba(180, 190, 210, 0.3);
+  background: rgba(160, 170, 190, 0.35);
   border-radius: 1px;
   animation: rainDrop linear infinite;
-  will-change: transform, opacity; /* 提示浏览器优化 */
+  will-change: transform, opacity;
 }
 
 @keyframes rainDrop {
-  0% {
-    transform: translateY(-120vh);
-    opacity: 0;
-  }
-  10% {
-    opacity: 0.6;
-  }
-  90% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(120vh);
-    opacity: 0;
-  }
+  0% { transform: translateY(-120vh); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(120vh); opacity: 0; }
 }
 
-/* ========== 主卡片（移除模糊滤镜提升性能，改用半透明背景） ========== */
+/* ========== 封面页样式 ========== */
+.cover-page {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  background: rgba(20, 20, 28, 0.88);
+  backdrop-filter: blur(8px);
+  border-radius: 64px;
+  padding: 48px 32px 56px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  border: 1px solid rgba(180, 150, 110, 0.3);
+  transition: all 0.4s ease;
+}
+
+.cover-title {
+  font-size: 54px;
+  font-weight: 500;
+  color: #d9c8a9;
+  letter-spacing: 8px;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  font-family: '华文楷书', '华文行书', 'STXingkai', '楷体', cursive;
+}
+
+.cover-sub {
+  font-size: 18px;
+  color: #b8a87c;
+  margin-bottom: 48px;
+  border-top: 1px solid rgba(180,150,110,0.3);
+  display: inline-block;
+  padding-top: 16px;
+}
+
+.cover-desc {
+  font-size: 15px;
+  color: #cbc3ae;
+  line-height: 1.8;
+  margin-bottom: 48px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.start-btn {
+  background: linear-gradient(145deg, #7f6948, #5e4d32);
+  border: none;
+  padding: 16px 48px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #fcf3e0;
+  border-radius: 60px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
+  font-family: inherit;
+  letter-spacing: 2px;
+}
+
+.start-btn:hover {
+  transform: scale(1.02);
+  background: linear-gradient(145deg, #8e7854, #6c583b);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+}
+
+/* ========== 主卡片（答题/结果） ========== */
 .main {
   position: relative;
   z-index: 1;
   max-width: 720px;
   width: 100%;
   margin: 0 auto;
-  background: rgba(30, 30, 38, 0.96);
-  border-radius: 40px;
+  background: rgba(26, 26, 34, 0.96);
+  border-radius: 48px;
   box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.6);
   overflow: hidden;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(2px); /* 轻微模糊，不影响性能 */
+  backdrop-filter: blur(2px);
+  display: none;  /* 初始隐藏，封面点击后显示 */
 }
 
 .header {
-  background: linear-gradient(120deg, #8b6f47, #b89b6e);
-  color: white;
-  padding: 32px 28px;
+  background: linear-gradient(120deg, #6b5a42, #9c835c);
+  color: #faf0df;
+  padding: 28px 24px;
   text-align: center;
 }
 
 .header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  margin-bottom: 10px;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
 }
 
 .header p {
-  font-size: 15px;
-  opacity: 0.9;
-  font-weight: 400;
+  font-size: 14px;
+  opacity: 0.85;
 }
 
 .progress-bar {
-  height: 6px;
-  background: #33333f;
+  height: 4px;
+  background: #2f2f3a;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #b89b6e, #d4b88c);
+  background: linear-gradient(90deg, #c9af7b, #e6cf9e);
   width: 0%;
   transition: width 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
 .count {
   text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  color: #b0b0c0;
-  background: #272730;
-  padding: 10px 0 6px;
-  letter-spacing: 0.3px;
+  font-size: 13px;
+  font-weight: 400;
+  color: #b8a88c;
+  background: #21212a;
+  padding: 8px 0 6px;
+  letter-spacing: 1px;
 }
 
 .question-box {
@@ -124,11 +184,11 @@ body {
 }
 
 .question-title {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.45;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.5;
   margin-bottom: 28px;
-  color: #e8e8f0;
+  color: #ece3d0;
 }
 
 .choices {
@@ -138,30 +198,30 @@ body {
 
 .choice {
   padding: 14px 20px;
-  border: 1.5px solid #444455;
-  border-radius: 20px;
+  border: 1px solid #4a4a5a;
+  border-radius: 32px;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: #2e2e3a;
+  background: #2a2a34;
   font-size: 16px;
-  font-weight: 500;
-  color: #d0d0e0;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-  touch-action: manipulation; /* 提升移动端响应 */
+  font-weight: 400;
+  color: #d9d0bb;
+  touch-action: manipulation;
+  text-align: left;
 }
 
 .choice:hover {
-  border-color: #b89b6e;
-  background: #383848;
+  border-color: #c9af7b;
+  background: #3a3540;
   transform: translateY(-1px);
 }
 
 .choice.active {
-  border-color: #d4b88c;
-  background: #453b2f;
-  color: #f0e2cc;
-  font-weight: 600;
-  box-shadow: 0 4px 8px rgba(184, 155, 110, 0.2);
+  border-color: #e6cf9e;
+  background: #4d3e2c;
+  color: #fff4e4;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(180, 140, 80, 0.2);
 }
 
 .nav {
@@ -171,161 +231,201 @@ body {
 }
 
 button {
-  padding: 14px 20px;
+  padding: 12px 20px;
   border: none;
   border-radius: 40px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
   flex: 1;
   transition: 0.2s;
-  touch-action: manipulation;
+  font-family: inherit;
 }
 
 .btn-back {
-  background: #383848;
-  color: #c0c0d0;
+  background: #323240;
+  color: #cfc6b0;
 }
 
 .btn-back:hover:not(:disabled) {
-  background: #454558;
+  background: #424252;
 }
 
 .btn-back:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .btn-next {
-  background: #b89b6e;
-  color: #fff;
-  box-shadow: 0 2px 6px rgba(184, 155, 110, 0.3);
+  background: #9c835c;
+  color: #fff8ec;
+  box-shadow: 0 2px 6px rgba(140, 110, 70, 0.3);
 }
 
 .btn-next:hover {
-  background: #c8aa7d;
+  background: #b5986e;
   transform: translateY(-1px);
 }
 
+/* 结果页面诗性风格 */
 .result-page {
   display: none;
   padding: 32px 28px;
 }
 
 .result-type {
-  font-size: 32px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #b89b6e, #d4b88c);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  letter-spacing: 1px;
+  font-size: 34px;
+  font-weight: 500;
+  color: #e6cf9e;
+  letter-spacing: 2px;
   margin-bottom: 12px;
+  border-left: 3px solid #c9af7b;
+  padding-left: 20px;
 }
 
 .result-name {
-  font-size: 26px;
-  font-weight: 700;
-  color: #e8e8f0;
+  font-size: 24px;
+  font-weight: 500;
+  color: #e2d7c0;
   margin-bottom: 16px;
-  border-left: 5px solid #d4b88c;
-  padding-left: 18px;
+  padding-left: 20px;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 20px 0 18px;
+  gap: 8px;
+  margin: 16px 0 20px;
+  padding-left: 20px;
 }
 
 .tag {
-  background: #383848;
-  padding: 6px 16px;
-  border-radius: 40px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #d4b88c;
+  background: #2a2a34;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  color: #c9af7b;
 }
 
 .dimensions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin: 28px 0 24px;
+  gap: 14px;
+  margin: 24px 0 28px;
 }
 
 .dimension {
-  background: #30303b;
-  padding: 18px 16px;
+  background: #25252e;
+  padding: 14px 14px;
   border-radius: 24px;
-  border: 1px solid #444455;
+  border: 1px solid #3f3f4b;
 }
 
 .dim-title {
-  font-weight: 700;
-  color: #d4b88c;
-  font-size: 16px;
-  margin-bottom: 10px;
+  font-weight: 500;
+  color: #d4be93;
+  font-size: 14px;
+  margin-bottom: 8px;
 }
 
 .dim-score {
-  font-size: 13px;
-  color: #c0c0d0;
-  background: rgba(55, 55, 70, 0.8);
+  font-size: 12px;
+  color: #b0a48a;
+  background: rgba(55, 55, 70, 0.6);
   display: inline-block;
-  padding: 4px 12px;
-  border-radius: 40px;
-  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 30px;
 }
 
 .result-desc {
-  line-height: 1.7;
-  font-size: 16px;
-  color: #d8d8e8;
-  background: rgba(55, 48, 38, 0.6);
-  padding: 20px 20px;
-  border-radius: 28px;
-  margin-top: 18px;
-  border: 1px solid rgba(212, 184, 140, 0.2);
+  line-height: 1.75;
+  font-size: 15px;
+  color: #e2d6c2;
+  background: rgba(45, 40, 35, 0.7);
+  padding: 24px 24px;
+  border-radius: 32px;
+  margin-top: 12px;
+  border: 1px solid rgba(200, 175, 120, 0.25);
+  letter-spacing: 0.3px;
+  white-space: pre-wrap;
 }
 
 .restart-btn {
   margin-top: 28px;
-  background: #383848;
-  color: #d4b88c;
-  font-weight: 600;
-  border: none;
+  background: #323240;
+  color: #d4be93;
+  font-weight: 500;
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   border-radius: 40px;
-  font-size: 16px;
   cursor: pointer;
-  transition: 0.2s;
 }
 
 .restart-btn:hover {
   background: #454558;
 }
 
-/* 移动端优化 */
+/* 雨声控制按钮 */
+.sound-control {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 52px;
+  height: 52px;
+  background: rgba(30, 30, 38, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  border: 1px solid rgba(180, 150, 110, 0.5);
+}
+
+.sound-control svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: #d4b88c;
+  stroke-width: 1.8;
+}
+
+.sound-control .mute-icon, .sound-control .unmute-icon {
+  display: none;
+}
+.sound-control[data-muted="false"] .unmute-icon { display: block; }
+.sound-control[data-muted="true"] .mute-icon { display: block; }
+
 @media (max-width: 550px) {
   body { padding: 12px; }
+  .cover-title { font-size: 40px; letter-spacing: 4px; }
+  .cover-desc { max-width: 95%; }
   .question-box { padding: 24px 20px; }
-  .question-title { font-size: 20px; }
+  .question-title { font-size: 19px; }
   .dimensions { grid-template-columns: 1fr; }
-  .result-name { font-size: 22px; }
-  .choice { padding: 12px 16px; }
-  button { padding: 12px 16px; }
+  .result-type { font-size: 28px; }
+  .sound-control { bottom: 16px; right: 16px; width: 44px; height: 44px; }
 }
 </style>
 </head>
 <body>
 <div class="rain-bg"></div>
+
+<!-- 封面页 -->
+<div class="cover-page" id="coverPage">
+  <div class="cover-title">去往哪里</div>
+  <div class="cover-sub">· 人格灰域测写 ·</div>
+  <div class="cover-desc">你站在雨的背面，听不见回声。<br>有些痛在喉咙里结痂，<br>你一直想找一个地方，把它轻轻放下。</div>
+  <button class="start-btn" id="startTestBtn">步入雨幕</button>
+</div>
+
+<!-- 主测试模块（初始隐藏） -->
 <div class="main" id="app">
   <div class="header">
-    <h1>多维人格深度测试</h1>
-    <p>依恋·自我·现实·自律 | 8属性精准画像</p>
+    <h1>灰域测写</h1>
+    <p>依恋·自我·现实·自律 | 无声的剖面</p>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="count" id="questionCounter"></div>
@@ -336,146 +436,132 @@ button {
       <div class="choices" id="choicesContainer"></div>
     </div>
     <div class="nav">
-      <button class="btn-back" id="prevBtn" disabled aria-label="上一题">◀ 上一题</button>
-      <button class="btn-next" id="nextBtn" aria-label="下一题">下一题 ▶</button>
+      <button class="btn-back" id="prevBtn" disabled>◀ 溯回</button>
+      <button class="btn-next" id="nextBtn">深处 ▶</button>
     </div>
   </div>
 
   <div id="resultPanel" class="result-page" style="display: none;">
     <div class="result-type" id="resultTypeCode"></div>
-    <div class="result-name" id="resultTypeName"></div>
+    <div class="result-name" id="resultNamePoetic"></div>
     <div class="tags" id="resultTags"></div>
     <div class="dimensions" id="resultDimensions"></div>
     <div class="result-desc" id="resultDesc"></div>
-    <button class="restart-btn" id="restartTestBtn" aria-label="重新测试">🔄 重新测试</button>
+    <button class="restart-btn" id="restartTestBtn">重返雨幕</button>
   </div>
 </div>
 
+<div class="sound-control" id="soundControl" data-muted="true" title="雨声">
+  <svg class="unmute-icon" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>
+  <svg class="mute-icon" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 9v6h4l5 4V5L7 9H3z"/><line x1="18" y1="6" x2="22" y2="10"/><line x1="22" y1="6" x2="18" y2="10"/></svg>
+</div>
+
 <script>
-// 优化点：减少雨丝数量至80，提升移动端流畅度
+// ======================= 雨声系统 (与原版一致) =======================
+class RainSound {
+  constructor() { this.audioCtx = null; this.source = null; this.gainNode = null; this.filterNode = null; this.isPlaying = false; this.isMuted = true; this.initiated = false; }
+  async init() {
+    if (this.initiated) return;
+    try {
+      this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      this.gainNode = this.audioCtx.createGain();
+      this.filterNode = this.audioCtx.createBiquadFilter();
+      this.filterNode.type = 'lowpass';
+      this.filterNode.frequency.value = 1300;
+      this.filterNode.Q.value = 0.5;
+      this.gainNode.gain.value = this.isMuted ? 0 : 0.32;
+      this.gainNode.connect(this.filterNode);
+      this.filterNode.connect(this.audioCtx.destination);
+      const sampleRate = this.audioCtx.sampleRate;
+      const bufferSize = sampleRate * 2;
+      const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.75;
+      this.source = this.audioCtx.createBufferSource();
+      this.source.buffer = buffer;
+      this.source.loop = true;
+      this.source.connect(this.gainNode);
+      this.source.start();
+      this.initiated = true;
+      if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
+      this.isPlaying = true;
+    } catch(e) { console.warn(e); }
+  }
+  async mute() { if (!this.initiated) return; this.isMuted = true; if(this.gainNode) this.gainNode.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime+0.05); }
+  async unmute() { if (!this.initiated) await this.init(); this.isMuted = false; if(this.gainNode && this.audioCtx) { if(this.audioCtx.state === 'suspended') await this.audioCtx.resume(); this.gainNode.gain.linearRampToValueAtTime(0.32, this.audioCtx.currentTime+0.05); } }
+  toggle() { this.isMuted ? this.unmute() : this.mute(); }
+}
+const rain = new RainSound();
+const soundBtn = document.getElementById('soundControl');
+function updateSoundIcon() { soundBtn.setAttribute('data-muted', rain.isMuted ? 'true' : 'false'); }
+soundBtn.addEventListener('click', async (e) => { e.stopPropagation(); if (!rain.initiated) await rain.init(); rain.toggle(); updateSoundIcon(); });
+let rainStarted = false;
+function startRainOnUserGesture() { if (rainStarted) return; rainStarted = true; rain.init().then(() => { rain.unmute(); updateSoundIcon(); }).catch(e=>console.warn); }
+document.body.addEventListener('click', startRainOnUserGesture, { once: true });
+document.body.addEventListener('touchstart', startRainOnUserGesture, { once: true });
+
+// ======================= 雨丝生成 =======================
 (function initRain() {
-  const rainContainer = document.querySelector('.rain-bg');
-  if (!rainContainer) return;
-  const RAIN_COUNT = 80; // 原120 → 80，性能更好，密集度足够
-  for (let i = 0; i < RAIN_COUNT; i++) {
+  const container = document.querySelector('.rain-bg');
+  if(!container) return;
+  for(let i=0;i<80;i++) {
     const span = document.createElement('span');
-    span.style.left = Math.random() * 100 + '%';
-    span.style.height = (Math.random() * 80 + 30) + 'px';
-    const duration = Math.random() * 1.4 + 0.7;
-    span.style.animationDuration = duration + 's';
-    span.style.animationDelay = Math.random() * 4 + 's';
-    rainContainer.appendChild(span);
+    span.style.left = Math.random()*100+'%';
+    span.style.height = (Math.random()*80+30)+'px';
+    span.style.animationDuration = (Math.random()*1.4+0.7)+'s';
+    span.style.animationDelay = (Math.random()*4)+'s';
+    container.appendChild(span);
   }
 })();
 
-// ----------------------------- 题库数据（完整保留）-----------------------------
+// ======================= 题库 (保持原逻辑, 16题) =======================
 const QUESTIONS = [
-  { dim: "as", text: "我很害怕被伴侣/重要的人抛弃", opts: [
-    { label: "非常同意", weights: { a:2, s:0 } }, { label: "同意", weights: { a:1, s:0 } },
-    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:0, s:1 } },
-    { label: "非常不同意", weights: { a:0, s:2 } }
-  ] },
-  { dim: "as", text: "我在亲密关系中经常感到不安，需要反复确认对方的爱", opts: [
-    { label: "非常同意", weights: { a:2, s:0 } }, { label: "同意", weights: { a:1, s:0 } },
-    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:0, s:1 } },
-    { label: "非常不同意", weights: { a:0, s:2 } }
-  ] },
-  { dim: "as", text: "我能坦然接受伴侣的独立空间，不会过度黏人", opts: [
-    { label: "非常同意", weights: { a:0, s:2 } }, { label: "同意", weights: { a:0, s:1 } },
-    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:1, s:0 } },
-    { label: "非常不同意", weights: { a:2, s:0 } }
-  ] },
-  { dim: "as", text: "我在关系中很容易患得患失，担心对方不够爱自己", opts: [
-    { label: "非常同意", weights: { a:2, s:0 } }, { label: "同意", weights: { a:1, s:0 } },
-    { label: "中立", weights: { a:0, s:0 } }, { label: "不同意", weights: { a:0, s:1 } },
-    { label: "非常不同意", weights: { a:0, s:2 } }
-  ] },
-  { dim: "df", text: "我经常觉得自己不够好，比不上别人", opts: [
-    { label: "非常同意", weights: { d:2, f:0 } }, { label: "同意", weights: { d:1, f:0 } },
-    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:0, f:1 } },
-    { label: "非常不同意", weights: { d:0, f:2 } }
-  ] },
-  { dim: "df", text: "我对自己的价值有清晰的认知，不会轻易被他人评价影响", opts: [
-    { label: "非常同意", weights: { d:0, f:2 } }, { label: "同意", weights: { d:0, f:1 } },
-    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:1, f:0 } },
-    { label: "非常不同意", weights: { d:2, f:0 } }
-  ] },
-  { dim: "df", text: "我很在意别人对我的看法，会为了讨好他人委屈自己", opts: [
-    { label: "非常同意", weights: { d:2, f:0 } }, { label: "同意", weights: { d:1, f:0 } },
-    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:0, f:1 } },
-    { label: "非常不同意", weights: { d:0, f:2 } }
-  ] },
-  { dim: "df", text: "我相信自己有能力做好大多数事情，敢于尝试新挑战", opts: [
-    { label: "非常同意", weights: { d:0, f:2 } }, { label: "同意", weights: { d:0, f:1 } },
-    { label: "中立", weights: { d:0, f:0 } }, { label: "不同意", weights: { d:1, f:0 } },
-    { label: "非常不同意", weights: { d:2, f:0 } }
-  ] },
-  { dim: "gh", text: "我更相信直觉和灵感，而不是眼前的客观事实", opts: [
-    { label: "非常同意", weights: { g:2, h:0 } }, { label: "同意", weights: { g:1, h:0 } },
-    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:0, h:1 } },
-    { label: "非常不同意", weights: { g:0, h:2 } }
-  ] },
-  { dim: "gh", text: "我做决策时会优先考虑实际条件和可行性", opts: [
-    { label: "非常同意", weights: { g:0, h:2 } }, { label: "同意", weights: { g:0, h:1 } },
-    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:1, h:0 } },
-    { label: "非常不同意", weights: { g:2, h:0 } }
-  ] },
-  { dim: "gh", text: "我经常沉浸在自己的幻想中，对未来有很多不切实际的期待", opts: [
-    { label: "非常同意", weights: { g:2, h:0 } }, { label: "同意", weights: { g:1, h:0 } },
-    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:0, h:1 } },
-    { label: "非常不同意", weights: { g:0, h:2 } }
-  ] },
-  { dim: "gh", text: "我能清晰区分理想和现实，做事一步一个脚印", opts: [
-    { label: "非常同意", weights: { g:0, h:2 } }, { label: "同意", weights: { g:0, h:1 } },
-    { label: "中立", weights: { g:0, h:0 } }, { label: "不同意", weights: { g:1, h:0 } },
-    { label: "非常不同意", weights: { g:2, h:0 } }
-  ] },
-  { dim: "jk", text: "我能严格遵守自己制定的计划，很少拖延", opts: [
-    { label: "非常同意", weights: { j:2, k:0 } }, { label: "同意", weights: { j:1, k:0 } },
-    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:0, k:1 } },
-    { label: "非常不同意", weights: { j:0, k:2 } }
-  ] },
-  { dim: "jk", text: "我经常拖延，事情不到最后一刻不会动手", opts: [
-    { label: "非常同意", weights: { j:0, k:2 } }, { label: "同意", weights: { j:0, k:1 } },
-    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:1, k:0 } },
-    { label: "非常不同意", weights: { j:2, k:0 } }
-  ] },
-  { dim: "jk", text: "我能很好地控制自己的情绪和欲望，不会冲动行事", opts: [
-    { label: "非常同意", weights: { j:2, k:0 } }, { label: "同意", weights: { j:1, k:0 } },
-    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:0, k:1 } },
-    { label: "非常不同意", weights: { j:0, k:2 } }
-  ] },
-  { dim: "jk", text: "我喜欢随性自由的生活，不喜欢被规则和计划束缚", opts: [
-    { label: "非常同意", weights: { j:0, k:2 } }, { label: "同意", weights: { j:0, k:1 } },
-    { label: "中立", weights: { j:0, k:0 } }, { label: "不同意", weights: { j:1, k:0 } },
-    { label: "非常不同意", weights: { j:2, k:0 } }
-  ] }
+  { dim: "as", text: "你害怕被重要的人遗弃，像旧物一样落灰", opts: [{label:"非常同意",weights:{a:2,s:0}},{label:"同意",weights:{a:1,s:0}},{label:"模糊",weights:{a:0,s:0}},{label:"不同意",weights:{a:0,s:1}},{label:"非常抗拒",weights:{a:0,s:2}}] },
+  { dim: "as", text: "你经常需要反复确认对方的爱，像求证一个谎言", opts: [{label:"非常同意",weights:{a:2,s:0}},{label:"同意",weights:{a:1,s:0}},{label:"中立",weights:{a:0,s:0}},{label:"不同意",weights:{a:0,s:1}},{label:"非常不同意",weights:{a:0,s:2}}] },
+  { dim: "as", text: "你能坦然接受伴侣的独立，不将自己黏附在他人身上", opts: [{label:"非常同意",weights:{a:0,s:2}},{label:"同意",weights:{a:0,s:1}},{label:"中立",weights:{a:0,s:0}},{label:"不同意",weights:{a:1,s:0}},{label:"非常不同意",weights:{a:2,s:0}}] },
+  { dim: "as", text: "你在关系中患得患失，像捧着一盏随时熄灭的烛火", opts: [{label:"非常同意",weights:{a:2,s:0}},{label:"同意",weights:{a:1,s:0}},{label:"不确定",weights:{a:0,s:0}},{label:"不同意",weights:{a:0,s:1}},{label:"完全不是",weights:{a:0,s:2}}] },
+  { dim: "df", text: "你常觉得自己不够好，像一件有裂痕的瓷器", opts: [{label:"非常同意",weights:{d:2,f:0}},{label:"同意",weights:{d:1,f:0}},{label:"中立",weights:{d:0,f:0}},{label:"不同意",weights:{d:0,f:1}},{label:"非常不同意",weights:{d:0,f:2}}] },
+  { dim: "df", text: "你对自己的价值有清晰认知，不易被外界评价摇动", opts: [{label:"非常同意",weights:{d:0,f:2}},{label:"同意",weights:{d:0,f:1}},{label:"模糊",weights:{d:0,f:0}},{label:"不同意",weights:{d:1,f:0}},{label:"完全否定",weights:{d:2,f:0}}] },
+  { dim: "df", text: "你太在意他人目光，经常委屈自己讨好", opts: [{label:"非常同意",weights:{d:2,f:0}},{label:"同意",weights:{d:1,f:0}},{label:"中立",weights:{d:0,f:0}},{label:"不同意",weights:{d:0,f:1}},{label:"非常不同意",weights:{d:0,f:2}}] },
+  { dim: "df", text: "你相信自己有能力面对挑战，敢于闯入未知", opts: [{label:"非常同意",weights:{d:0,f:2}},{label:"同意",weights:{d:0,f:1}},{label:"说不准",weights:{d:0,f:0}},{label:"不同意",weights:{d:1,f:0}},{label:"完全不能",weights:{d:2,f:0}}] },
+  { dim: "gh", text: "你更相信直觉与灵感，而非眼前的现实规则", opts: [{label:"非常同意",weights:{g:2,h:0}},{label:"同意",weights:{g:1,h:0}},{label:"中立",weights:{g:0,h:0}},{label:"不同意",weights:{g:0,h:1}},{label:"非常不同意",weights:{g:0,h:2}}] },
+  { dim: "gh", text: "你决策时优先考虑实际条件和可行性", opts: [{label:"非常同意",weights:{g:0,h:2}},{label:"同意",weights:{g:0,h:1}},{label:"中间",weights:{g:0,h:0}},{label:"不同意",weights:{g:1,h:0}},{label:"非常不同意",weights:{g:2,h:0}}] },
+  { dim: "gh", text: "你经常沉浸于幻想，对未来有不切实际的期待", opts: [{label:"非常同意",weights:{g:2,h:0}},{label:"同意",weights:{g:1,h:0}},{label:"偶尔",weights:{g:0,h:0}},{label:"很少",weights:{g:0,h:1}},{label:"从不",weights:{g:0,h:2}}] },
+  { dim: "gh", text: "你能清晰区分理想与现实，一步步踩实土地", opts: [{label:"非常同意",weights:{g:0,h:2}},{label:"同意",weights:{g:0,h:1}},{label:"中立",weights:{g:0,h:0}},{label:"不同意",weights:{g:1,h:0}},{label:"完全不是",weights:{g:2,h:0}}] },
+  { dim: "jk", text: "你严守计划，很少拖延，像钟摆一样精确", opts: [{label:"非常同意",weights:{j:2,k:0}},{label:"同意",weights:{j:1,k:0}},{label:"模糊",weights:{j:0,k:0}},{label:"不同意",weights:{j:0,k:1}},{label:"非常不同意",weights:{j:0,k:2}}] },
+  { dim: "jk", text: "你经常拖延，直到最后一刻才动手", opts: [{label:"非常同意",weights:{j:0,k:2}},{label:"同意",weights:{j:0,k:1}},{label:"有时",weights:{j:0,k:0}},{label:"很少",weights:{j:1,k:0}},{label:"从不",weights:{j:2,k:0}}] },
+  { dim: "jk", text: "你善于控制情绪与欲望，不轻易冲动", opts: [{label:"非常同意",weights:{j:2,k:0}},{label:"同意",weights:{j:1,k:0}},{label:"中立",weights:{j:0,k:0}},{label:"不同意",weights:{j:0,k:1}},{label:"非常不同意",weights:{j:0,k:2}}] },
+  { dim: "jk", text: "你喜欢随性自由，厌恶规则和计划的束缚", opts: [{label:"非常同意",weights:{j:0,k:2}},{label:"同意",weights:{j:0,k:1}},{label:"中间",weights:{j:0,k:0}},{label:"不同意",weights:{j:1,k:0}},{label:"非常不同意",weights:{j:2,k:0}}] }
 ];
 
-const RESULT_DB = {
-  "ADGJ": { name: "焦虑·低自尊·理想·自律型", tags: "敏感内耗,完美主义,隐忍克制", desc: "内心充满不安与自我怀疑，却用理想主义驱动，用高度自律掩盖脆弱。你习惯把焦虑转化成拼命努力，但容易陷入「永远不够好」的循环。需要学会自我慈悲，接纳平凡，允许自己放松。" },
-  "ADGK": { name: "焦虑·低自尊·理想·随性型", tags: "浪漫脆弱,创意敏感,自由散漫", desc: "焦虑型依恋与低自我价值感交织，理想主义让你沉浸于精神世界，随性使你厌恶束缚。你富有艺术天赋和共情力，但容易拖延逃避，需练习小目标落地与自我肯定。" },
-  "ADHJ": { name: "焦虑·低自尊·现实·自律型", tags: "务实内耗,细节控,隐忍努力", desc: "你脚踏实地但又过度担忧，自律是为求得外界认可。害怕失败，做事极其靠谱，但内心常感疲惫。学习放松标准，信任自己的价值不依赖成就。" },
-  "ADHK": { name: "焦虑·低自尊·现实·随性型", tags: "随波逐流,敏感现实,回避压力", desc: "你在现实中容易感到无力，用随性逃避焦虑。虽能适应环境，但缺乏稳定内核。逐步建立微小自信和计划，会活得更踏实。" },
-  "AFGJ": { name: "焦虑·高自尊·理想·自律型", tags: "雄心勃勃,敏感进取,浪漫驱动", desc: "你对自己能力自信，但关系中容易焦虑；用理想与自律追求卓越。既渴望深度连接，又要求自己完美。需平衡亲密关系中的安全感，学习信任。" },
-  "AFGK": { name: "焦虑·高自尊·理想·随性型", tags: "自信浪漫,创意爆棚,自由灵魂", desc: "高自尊让你相信自己的独特，但依恋焦虑带来情感波动；理想主义和随性使你充满灵气。适合艺术创作，但需要学会情感落地与自律小习惯。" },
-  "AFHJ": { name: "焦虑·高自尊·现实·自律型", tags: "高效实干,情感细腻,目标清晰", desc: "你既有自信又务实，用自律达成目标，但在乎亲密关系反馈。你是高功能焦虑者，事业出色但内心易患得患失。练习正念放松，关系里多沟通。" },
-  "AFHK": { name: "焦虑·高自尊·现实·随性型", tags: "灵活敏锐,自信随和,现实享受", desc: "你对自己认可，处事灵活，但关系中容易担忧。喜欢按自己节奏生活，适应力强。适度关注伴侣需求，可以拥有温暖平衡的关系。" },
-  "SDGJ": { name: "安全·低自尊·理想·自律型", tags: "温柔隐忍,理想主义者,自律奉献", desc: "你依恋模式安全但自我评价偏低，内心有远大理想却常自我怀疑。温和而勤奋，容易为他人付出。需要建立自我认同，看见自己的光芒。" },
-  "SDGK": { name: "安全·低自尊·理想·随性型", tags: "随性浪漫,自我怀疑,温和创意", desc: "你情绪稳定，人际关系和谐，但内心常觉不足；喜欢理想化生活，做事随缘。提升自信可以让你潜力爆发，从微小成就感开始。" },
-  "SDHJ": { name: "安全·低自尊·现实·自律型", tags: "可靠勤奋,自我批判,务实求稳", desc: "你让人感到安心，对自己要求严格，踏实肯干但低估自己。你是团队基石，学习欣赏自己的贡献，不必过度谦虚。" },
-  "SDHK": { name: "安全·低自尊·现实·随性型", tags: "随和包容,缺乏野心,活在当下", desc: "你安全感足、随遇而安，但常低估自己价值。性格讨喜，满足于简单快乐。尝试小挑战可增强内在力量，发现更大可能性。" },
-  "SFGJ": { name: "安全·高自尊·理想·自律型", tags: "自信笃定,理想远航,高度自律", desc: "健康的依恋，强大的自我认同，心怀星辰大海，行动力极强。你是天生的领袖与开拓者，注意偶尔放松，拥抱不完美的浪漫。" },
-  "SFGK": { name: "安全·高自尊·理想·随性型", tags: "自信自由,浪漫豁达,灵感充沛", desc: "你内心安全，自信从容，理想主义却不强求，随性而有创意。活得潇洒自在，是身边人的小太阳。适当增加条理性会让才华更持久。" },
-  "SFHJ": { name: "安全·高自尊·现实·自律型", tags: "通透实干,稳重强大,目标王者", desc: "情绪稳定，认知清晰，务实自律，你是现实世界里的顶级选手。既能仰望星空又能脚踏实地，注意别太紧绷，享受过程。" },
-  "SFHK": { name: "安全·高自尊·现实·随性型", tags: "松弛自信,豁达通透,人生玩家", desc: "你拥有最理想的人格底色：安全感充足，自我认可，现实灵活，随性自由。情绪稳定又乐观，懂得享受生活，是很多人羡慕的状态。保持好奇，感染他人。" }
+// ======================= 16种诗性人格描述 (全部重写为示例风格) =======================
+const POETIC_RESULTS = {
+  "ADGJ": { poeticName: "沉渊·紧缚", desc: "你不在此处，也不在他者的目光中。你一直有喉咙哽咽的钝痛无处外溢，你也清楚明白，这种痛只要拿出来，就会被他者的火焰彻底点燃，你不敢，所以你沉默，疏离，被浓烈的火光所灼伤不如被遗忘，你在灰色中越走越远，然而你知道，你的痛只是摆在盒子里，要是有人再近一点，近一点，你就被看穿谜底了。你把自己裹进规则的茧，用自律的绳索勒住颤栗，可深渊一直在凝视你。" },
+  "ADGK": { poeticName: "流放·雾径", desc: "你走在一条没有路标的雾径，焦虑如影随形，自我低语如同潮汐。你渴望远方却总被幻梦绊倒，随性是你的浮木也是牢笼。你说不出自己的形状，像一块尚未凝固的树脂，裹着半只蝴蝶。有人在雨里喊你，你听不清那是呼唤还是回声。" },
+  "ADHJ": { poeticName: "铁锈·刻度", desc: "你用现实一寸一寸丈量自己的不值，自律是你唯一的盔甲，却锈迹斑斑。你害怕失败所以先一步否定自己，每一个脚印都渗出水银般的重量。你习惯把愿望碾碎，拌进混凝土里，筑成一座没有窗户的堡垒。你听见雨声，以为是自己的心跳。" },
+  "ADHK": { poeticName: "浮尘·折影", desc: "你是一粒被风吹斜的尘，在现实的水洼里映出无数破碎的倒影。焦虑让你蜷缩，低自尊让你不敢伸手，随性是你唯一的呼吸方式。你不期待被看见，只怕被风吹散后无人记得你曾路过。雨滴打在水面，你的影子晃了晃，就消失了。" },
+  "AFGJ": { poeticName: "冷焰·高悬", desc: "你的自信是一道冷焰，照亮自己却灼伤靠近的飞蛾。焦虑在骨缝里嘶鸣，你用理想主义的铁网将它囚禁，自律让你站在高崖之上。你渴望拥抱又怕跌落，于是把爱意打磨成锋利的冰棱。雨落在你肩头，瞬间凝成霜。" },
+  "AFGK": { poeticName: "游灵·未驯", desc: "你是一缕不肯降落的烟，高自尊让你拒绝匍匐，焦虑却让你在风中颤栗。理想主义是你透明的翅膀，随性是你野生的血液。你穿过雨幕却从不为谁停留，路过的人只看见你模糊的轮廓，而你知道，你连自己都尚未驯服。" },
+  "AFHJ": { poeticName: "锚点·缄默", desc: "你像一只被钉在现实墙上的蝴蝶标本，翅膀仍有光泽，却不再扇动。高自尊让你昂首，焦虑让你彻夜难眠，你用自律的钉锤把每一寸不安敲进骨缝。你从不说疼，只把雨声当成背景，可墙上的影子一直在抖。" },
+  "AFHK": { poeticName: "薄暮·缓行", desc: "你在黄昏的边界踱步，自信是你的斗篷，焦虑是内衬的荆棘。你务实又随性，像一场不急不慢的雨。你承认孤独但从不哀求拥抱，你知道有些答案需要等天亮，可你偏爱薄暮——它既不灼人，也不彻底黑暗。" },
+  "SDGJ": { poeticName: "静壤·暗涌", desc: "你是一片安静的土壤，安全依恋让你不惧风雨，可低自尊让你总在向下沉。理想主义是你深埋的种子，自律是你均匀的呼吸。你以为自己平和，但地底有岩浆在慢慢改道。雨落进土壤，没有声音，只有湿润。" },
+  "SDGK": { poeticName: "苇草·无根", desc: "你像一株长在河岸的苇草，风吹来就弯腰，雨落下就承重。你安全却自我怀疑，理想主义让你仰望，随性让你飘摇。你从不对抗，只是轻轻摇摆，路过的人说你好温柔，只有你知道，你没有根。" },
+  "SDHJ": { poeticName: "石阶·微痕", desc: "你是被踩实的石阶，安全，低自尊，现实，自律。你承受所有重量却不发一言，岁月在你表面留下细密裂纹。你相信踏实就是意义，却在深夜听见体内有河流干涸的回声。雨滴打在石阶上，溅起很小的花，很快消失。" },
+  "SDHK": { poeticName: "浅滩·搁浅", desc: "你是一片浅浅的滩涂，安全感让你不怕潮汐，低自尊让你甘于留在原地。现实是你脚下的沙，随性是潮水来了又走。你从不驶向深海，你知道那里太冷。偶尔有贝壳被冲上来，你把它握了握，又放下。" },
+  "SFGJ": { poeticName: "孤峰·凝望", desc: "你是一座独立的峰，安全，高自尊，理想主义，高度自律。你俯瞰云海却从不下山，风霜把你磨成锐利的形状。你渴望对话，但每一句回声都撞回自己胸膛。雨落在峰顶，变成雪，更冷了。" },
+  "SFGK": { poeticName: "野火·漫游", desc: "你是一簇烧过荒原的野火，安全且自信，理想让你蔓延，随性让你不拘方向。你照亮了暗处也留下灰烬，你从不问该去哪里，风往哪儿吹你就往哪儿走。雨来了也不怕，你知道自己会在潮湿中等来下一次燃烧。" },
+  "SFHJ": { poeticName: "界碑·不锈", desc: "你是伫立在交界处的界碑，安全，高自尊，现实，自律。你清晰知道自己是什么，不是僵硬的石头，而是金属铸造的刻度。你承受所有标记却不磨损，雨把你洗得更亮。你唯一的问题是——你从不问自己疼不疼。" },
+  "SFHK": { poeticName: "雨镜·无尘", desc: "你像一面被雨水洗过的镜子，安全通透，高自尊明晰，现实务实，随性自由。你不抗拒任何倒影，也不为谁停留。你映出天空也映出泥泞，但你始终干净。雨停了，镜面还留着水珠，那是你唯一柔软的证据。" }
 };
 
-// 全局状态
+// 全局变量
 let userAnswers = new Array(QUESTIONS.length).fill(null);
 let currentIndex = 0;
 let scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
 
+// DOM
+const coverPage = document.getElementById('coverPage');
+const mainApp = document.getElementById('app');
 const quizPanel = document.getElementById('quizPanel');
 const resultPanel = document.getElementById('resultPanel');
 const questionTextEl = document.getElementById('questionText');
@@ -485,127 +571,92 @@ const nextBtn = document.getElementById('nextBtn');
 const progressFill = document.getElementById('progressFill');
 const questionCounter = document.getElementById('questionCounter');
 
-function recalcTotalScores() {
-  scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
-  for (let i = 0; i < QUESTIONS.length; i++) {
-    const idx = userAnswers[i];
-    if (idx === null) continue;
-    const weights = QUESTIONS[i].opts[idx]?.weights;
-    if (weights) {
-      for (let [attr, val] of Object.entries(weights)) {
-        if (scoreMap[attr] !== undefined) scoreMap[attr] += val;
-      }
-    }
+function recalcScores() {
+  scoreMap = { a:0,s:0,d:0,f:0,g:0,h:0,j:0,k:0 };
+  for(let i=0;i<QUESTIONS.length;i++) {
+    let idx = userAnswers[i];
+    if(idx===null) continue;
+    let w = QUESTIONS[i].opts[idx]?.weights;
+    if(w) for(let [k,v] of Object.entries(w)) scoreMap[k]+=v;
   }
 }
-
-function getPersonalityCode() {
-  const asCode = scoreMap.a > scoreMap.s ? 'A' : (scoreMap.s > scoreMap.a ? 'S' : (Math.random()<0.5 ? 'A':'S'));
-  const dfCode = scoreMap.d > scoreMap.f ? 'D' : (scoreMap.f > scoreMap.d ? 'F' : (Math.random()<0.5 ? 'D':'F'));
-  const ghCode = scoreMap.g > scoreMap.h ? 'G' : (scoreMap.h > scoreMap.g ? 'H' : (Math.random()<0.5 ? 'G':'H'));
-  const jkCode = scoreMap.j > scoreMap.k ? 'J' : (scoreMap.k > scoreMap.j ? 'K' : (Math.random()<0.5 ? 'J':'K'));
-  return asCode + dfCode + ghCode + jkCode;
+function getCode() {
+  let as = scoreMap.a > scoreMap.s ? 'A' : (scoreMap.s > scoreMap.a ? 'S' : (Math.random()<0.5?'A':'S'));
+  let df = scoreMap.d > scoreMap.f ? 'D' : (scoreMap.f > scoreMap.d ? 'F' : (Math.random()<0.5?'D':'F'));
+  let gh = scoreMap.g > scoreMap.h ? 'G' : (scoreMap.h > scoreMap.g ? 'H' : (Math.random()<0.5?'G':'H'));
+  let jk = scoreMap.j > scoreMap.k ? 'J' : (scoreMap.k > scoreMap.j ? 'K' : (Math.random()<0.5?'J':'K'));
+  return as+df+gh+jk;
 }
-
-function updateProgressAndCounter() {
-  const answered = userAnswers.filter(a => a !== null).length;
-  progressFill.style.width = (answered / QUESTIONS.length) * 100 + '%';
+function updateProgress() {
+  let answered = userAnswers.filter(a=>a!==null).length;
+  progressFill.style.width = (answered/QUESTIONS.length)*100+'%';
   questionCounter.innerText = `${answered}/${QUESTIONS.length} 已答`;
 }
-
-function renderCurrentQuestion() {
-  const q = QUESTIONS[currentIndex];
+function renderQuestion() {
+  let q = QUESTIONS[currentIndex];
   questionTextEl.innerText = `${currentIndex+1}. ${q.text}`;
-  const selected = userAnswers[currentIndex];
+  let selected = userAnswers[currentIndex];
   choicesContainer.innerHTML = '';
-  q.opts.forEach((opt, idx) => {
-    const div = document.createElement('div');
-    div.className = 'choice' + (selected === idx ? ' active' : '');
+  q.opts.forEach((opt,idx)=>{
+    let div = document.createElement('div');
+    div.className = 'choice' + (selected===idx ? ' active' : '');
     div.innerText = opt.label;
-    div.addEventListener('click', () => {
-      userAnswers[currentIndex] = idx;
-      recalcTotalScores();
-      renderCurrentQuestion();
-      updateProgressAndCounter();
+    div.addEventListener('click',()=>{
+      userAnswers[currentIndex]=idx;
+      recalcScores();
+      renderQuestion();
+      updateProgress();
     });
     choicesContainer.appendChild(div);
   });
-  updateProgressAndCounter();
-  prevBtn.disabled = (currentIndex === 0);
-  nextBtn.innerText = (currentIndex === QUESTIONS.length-1) ? "✨ 提交测试" : "下一题 →";
+  updateProgress();
+  prevBtn.disabled = (currentIndex===0);
+  nextBtn.innerText = (currentIndex===QUESTIONS.length-1) ? "✨ 浮现结果" : "下一题 →";
 }
-
 function showResult() {
-  for (let i = 0; i < userAnswers.length; i++) {
-    if (userAnswers[i] === null) {
-      alert(`请先完成第 ${i+1} 题后再提交～`);
-      currentIndex = i;
-      renderCurrentQuestion();
-      return;
-    }
-  }
-  recalcTotalScores();
-  const typeCode = getPersonalityCode();
-  const data = RESULT_DB[typeCode] || RESULT_DB["SFHK"];
-  document.getElementById('resultTypeCode').innerText = `${typeCode} · 人格编码`;
-  document.getElementById('resultTypeName').innerText = data.name;
+  for(let i=0;i<userAnswers.length;i++) if(userAnswers[i]===null) { alert(`请完成第 ${i+1} 题`); currentIndex=i; renderQuestion(); return; }
+  recalcScores();
+  let code = getCode();
+  let data = POETIC_RESULTS[code] || POETIC_RESULTS["SFHK"];
+  document.getElementById('resultTypeCode').innerText = code + " · 灰域编码";
+  document.getElementById('resultNamePoetic').innerText = data.poeticName;
   document.getElementById('resultDesc').innerText = data.desc;
-  document.getElementById('resultTags').innerHTML = data.tags.split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('');
-  
-  const dims = [
-    { name: "依恋类型", left: scoreMap.a, right: scoreMap.s, leftL: "焦虑型(A)", rightL: "安全型(S)", final: scoreMap.a > scoreMap.s ? "焦虑型(A)" : (scoreMap.s > scoreMap.a ? "安全型(S)" : "平衡型") },
-    { name: "自我认知", left: scoreMap.d, right: scoreMap.f, leftL: "低自尊(D)", rightL: "高自尊(F)", final: scoreMap.d > scoreMap.f ? "低自尊(D)" : (scoreMap.f > scoreMap.d ? "高自尊(F)" : "均衡型") },
-    { name: "现实程度", left: scoreMap.g, right: scoreMap.h, leftL: "理想主义(G)", rightL: "现实主义(H)", final: scoreMap.g > scoreMap.h ? "理想主义(G)" : (scoreMap.h > scoreMap.g ? "现实主义(H)" : "理想与现实平衡") },
-    { name: "自律程度", left: scoreMap.j, right: scoreMap.k, leftL: "自律型(J)", rightL: "随性型(K)", final: scoreMap.j > scoreMap.k ? "自律型(J)" : (scoreMap.k > scoreMap.j ? "随性型(K)" : "灵活中庸") }
+  // 展示维度量表（轻量化）
+  let dims = [
+    { name:"依恋", left:scoreMap.a, right:scoreMap.s, leftL:"焦虑", rightL:"安全", final:scoreMap.a>scoreMap.s?"焦虑偏倚":(scoreMap.s>scoreMap.a?"安全偏倚":"潮汐平衡") },
+    { name:"自我", left:scoreMap.d, right:scoreMap.f, leftL:"低自尊", rightL:"高自尊", final:scoreMap.d>scoreMap.f?"低自尊":(scoreMap.f>scoreMap.d?"高自尊":"浮标中置") },
+    { name:"现实", left:scoreMap.g, right:scoreMap.h, leftL:"理想", rightL:"现实", final:scoreMap.g>scoreMap.h?"理想偏执":(scoreMap.h>scoreMap.g?"现实刻度":"镜中界限") },
+    { name:"自律", left:scoreMap.j, right:scoreMap.k, leftL:"自律", rightL:"随性", final:scoreMap.j>scoreMap.k?"紧缚":(scoreMap.k>scoreMap.j?"流散":"游移不定") }
   ];
-  document.getElementById('resultDimensions').innerHTML = dims.map(d => `
-    <div class="dimension">
-      <div class="dim-title">${d.name} · ${d.final}</div>
-      <div class="dim-score">${d.leftL} ${d.left} ｜ ${d.rightL} ${d.right}</div>
-    </div>
-  `).join('');
-  
+  document.getElementById('resultDimensions').innerHTML = dims.map(d=>`<div class="dimension"><div class="dim-title">${d.name} · ${d.final}</div><div class="dim-score">${d.leftL} ${d.left} ｜ ${d.rightL} ${d.right}</div></div>`).join('');
+  document.getElementById('resultTags').innerHTML = `<span class="tag">灰域测写</span><span class="tag">雨声掩体</span><span class="tag">未寄出的信</span>`;
   quizPanel.style.display = 'none';
   resultPanel.style.display = 'block';
 }
-
 function resetTest() {
   userAnswers.fill(null);
   currentIndex = 0;
-  scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
+  scoreMap = { a:0,s:0,d:0,f:0,g:0,h:0,j:0,k:0 };
   quizPanel.style.display = 'block';
   resultPanel.style.display = 'none';
-  renderCurrentQuestion();
+  renderQuestion();
 }
-
 function bindEvents() {
-  nextBtn.addEventListener('click', () => {
-    if (userAnswers[currentIndex] === null) {
-      alert("请先选择当前题目的选项～");
-      return;
-    }
-    if (currentIndex === QUESTIONS.length-1) {
-      if (userAnswers.every(v => v !== null)) showResult();
-      else alert("还有题目未完成，请返回作答～");
-    } else {
-      currentIndex++;
-      renderCurrentQuestion();
-    }
+  nextBtn.addEventListener('click',()=>{
+    if(userAnswers[currentIndex]===null) { alert("请先选择一项"); return; }
+    if(currentIndex===QUESTIONS.length-1) { if(userAnswers.every(v=>v!==null)) showResult(); else alert("还有未答"); }
+    else { currentIndex++; renderQuestion(); }
   });
-  prevBtn.addEventListener('click', () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      renderCurrentQuestion();
-    }
+  prevBtn.addEventListener('click',()=>{ if(currentIndex>0){ currentIndex--; renderQuestion(); } });
+  document.getElementById('restartTestBtn').addEventListener('click',resetTest);
+  document.getElementById('startTestBtn').addEventListener('click',()=>{
+    coverPage.style.display = 'none';
+    mainApp.style.display = 'block';
+    resetTest(); 
   });
-  document.getElementById('restartTestBtn')?.addEventListener('click', resetTest);
 }
-
-function init() {
-  bindEvents();
-  renderCurrentQuestion();
-}
-init();
+bindEvents();
+renderQuestion();
 </script>
 </body>
 </html>
