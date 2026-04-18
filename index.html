@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-<title>去往哪里 · 人格灰域测试</title>
+<title>尖塔之影 · 怪物灵魂测试</title>
 <style>
 * {
   margin: 0;
@@ -12,13 +12,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* 瘦金体风格字体栈 — 优先使用华文楷书、瘦金体风格 */
-body, button, .choice, .question-title, .result-name, .result-desc, .header h1, .header p, .tag, .dim-title {
-  font-family: '华文楷书', '华文行书', 'STXingkai', '楷体', 'Microsoft YaHei', 'KaiTi', 'Noto Serif SC', serif;
-}
-
 body {
-  background: #0e0e12;
+  background: #0a0c12;
   padding: 20px;
   min-height: 100vh;
   display: flex;
@@ -26,10 +21,11 @@ body {
   justify-content: center;
   position: relative;
   overflow-x: hidden;
+  font-family: '华文楷书', '华文行书', 'STXingkai', '楷体', 'Noto Serif SC', serif;
 }
 
-/* ========== 雨丝背景 ========== */
-.rain-bg {
+/* ========== 动态背景（篝火与雾雨）========== */
+.bg-ambient {
   position: fixed;
   top: 0;
   left: 0;
@@ -37,110 +33,66 @@ body {
   height: 100%;
   pointer-events: none;
   z-index: 0;
+  background: radial-gradient(circle at 20% 30%, #1a1a24, #0a0c12);
   overflow: hidden;
 }
 
-.rain-bg span {
+/* 雾的流动 */
+.fog-layer {
   position: absolute;
-  width: 1.5px;
-  background: rgba(160, 170, 190, 0.35);
-  border-radius: 1px;
-  animation: rainDrop linear infinite;
-  will-change: transform, opacity;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: repeating-linear-gradient(90deg, 
+    rgba(80, 70, 60, 0.08) 0px, 
+    rgba(80, 70, 60, 0.08) 2px,
+    transparent 2px,
+    transparent 8px);
+  animation: fogDrift 24s linear infinite;
+  opacity: 0.6;
 }
 
-@keyframes rainDrop {
-  0% { transform: translateY(-120vh); opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(120vh); opacity: 0; }
+@keyframes fogDrift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-/* ========== 封面页样式 ========== */
-.cover-page {
-  position: relative;
-  z-index: 2;
-  max-width: 600px;
-  width: 100%;
-  margin: 0 auto;
-  background: rgba(20, 20, 28, 0.88);
-  backdrop-filter: blur(8px);
-  border-radius: 64px;
-  padding: 48px 32px 56px;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  border: 1px solid rgba(180, 150, 110, 0.3);
-  transition: all 0.4s ease;
+/* 零星火光粒子 */
+.firefly {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #ffaa66;
+  border-radius: 50%;
+  opacity: 0;
+  animation: flicker 4s ease-in-out infinite;
 }
 
-.cover-title {
-  font-size: 54px;
-  font-weight: 500;
-  color: #d9c8a9;
-  letter-spacing: 8px;
-  margin-bottom: 24px;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  font-family: '华文楷书', '华文行书', 'STXingkai', '楷体', cursive;
+@keyframes flicker {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 0.8; transform: translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.2); }
 }
 
-.cover-sub {
-  font-size: 18px;
-  color: #b8a87c;
-  margin-bottom: 48px;
-  border-top: 1px solid rgba(180,150,110,0.3);
-  display: inline-block;
-  padding-top: 16px;
-}
-
-.cover-desc {
-  font-size: 15px;
-  color: #cbc3ae;
-  line-height: 1.8;
-  margin-bottom: 48px;
-  max-width: 80%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.start-btn {
-  background: linear-gradient(145deg, #7f6948, #5e4d32);
-  border: none;
-  padding: 16px 48px;
-  font-size: 20px;
-  font-weight: 500;
-  color: #fcf3e0;
-  border-radius: 60px;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.3);
-  font-family: inherit;
-  letter-spacing: 2px;
-}
-
-.start-btn:hover {
-  transform: scale(1.02);
-  background: linear-gradient(145deg, #8e7854, #6c583b);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
-}
-
-/* ========== 主卡片（答题/结果） ========== */
+/* ========== 主卡片 ========== */
 .main {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 720px;
   width: 100%;
   margin: 0 auto;
-  background: rgba(26, 26, 34, 0.96);
+  background: rgba(18, 20, 28, 0.94);
+  backdrop-filter: blur(4px);
   border-radius: 48px;
-  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 20px 45px -8px rgba(0,0,0,0.8);
   overflow: hidden;
-  backdrop-filter: blur(2px);
-  display: none;  /* 初始隐藏，封面点击后显示 */
+  border: 1px solid rgba(180, 140, 80, 0.3);
 }
 
 .header {
-  background: linear-gradient(120deg, #6b5a42, #9c835c);
-  color: #faf0df;
+  background: linear-gradient(135deg, #3d2a1a, #5c3e24);
+  color: #f2e4c6;
   padding: 28px 24px;
   text-align: center;
 }
@@ -148,12 +100,12 @@ body {
 .header h1 {
   font-size: 26px;
   font-weight: 500;
-  letter-spacing: 2px;
+  letter-spacing: 4px;
   margin-bottom: 8px;
 }
 
 .header p {
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0.85;
 }
 
@@ -164,7 +116,7 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #c9af7b, #e6cf9e);
+  background: linear-gradient(90deg, #b87c3a, #e6af6e);
   width: 0%;
   transition: width 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
@@ -173,8 +125,8 @@ body {
   text-align: center;
   font-size: 13px;
   font-weight: 400;
-  color: #b8a88c;
-  background: #21212a;
+  color: #c0aa7a;
+  background: #1e1f28;
   padding: 8px 0 6px;
   letter-spacing: 1px;
 }
@@ -184,11 +136,12 @@ body {
 }
 
 .question-title {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 500;
   line-height: 1.5;
   margin-bottom: 28px;
-  color: #ece3d0;
+  color: #f2e4c6;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
 }
 
 .choices {
@@ -203,25 +156,25 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   background: #2a2a34;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
-  color: #d9d0bb;
+  color: #ddd0b8;
   touch-action: manipulation;
   text-align: left;
 }
 
 .choice:hover {
-  border-color: #c9af7b;
+  border-color: #b87c3a;
   background: #3a3540;
   transform: translateY(-1px);
 }
 
 .choice.active {
-  border-color: #e6cf9e;
+  border-color: #e6af6e;
   background: #4d3e2c;
   color: #fff4e4;
   font-weight: 500;
-  box-shadow: 0 4px 10px rgba(180, 140, 80, 0.2);
+  box-shadow: 0 4px 10px rgba(180, 120, 50, 0.25);
 }
 
 .nav {
@@ -257,24 +210,101 @@ button {
 }
 
 .btn-next {
-  background: #9c835c;
+  background: #b87c3a;
   color: #fff8ec;
-  box-shadow: 0 2px 6px rgba(140, 110, 70, 0.3);
+  box-shadow: 0 2px 8px rgba(140, 80, 30, 0.4);
 }
 
 .btn-next:hover {
-  background: #b5986e;
+  background: #d49448;
   transform: translateY(-1px);
 }
 
-/* 结果页面诗性风格 */
+/* ========== 封面页 ========== */
+.cover-page {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  background: rgba(20, 20, 28, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 64px;
+  padding: 48px 32px 56px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  border: 1px solid rgba(180, 130, 70, 0.4);
+}
+
+.cover-title {
+  font-size: 48px;
+  font-weight: 500;
+  color: #e6cf9e;
+  letter-spacing: 6px;
+  margin-bottom: 24px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+
+.cover-sub {
+  font-size: 16px;
+  color: #b89a6a;
+  margin-bottom: 40px;
+  border-top: 1px solid rgba(180,130,70,0.3);
+  display: inline-block;
+  padding-top: 14px;
+}
+
+.cover-desc {
+  font-size: 15px;
+  color: #d0c0a0;
+  line-height: 1.8;
+  margin-bottom: 48px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.start-btn {
+  background: linear-gradient(145deg, #7f5e38, #5a3e22);
+  border: none;
+  padding: 16px 48px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #fcf3e0;
+  border-radius: 60px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+  font-family: inherit;
+  letter-spacing: 2px;
+}
+
+.start-btn:hover {
+  transform: scale(1.02);
+  background: linear-gradient(145deg, #9b764a, #6e4e2c);
+}
+
+/* ========== 结果页面（怪物人格） ========== */
 .result-page {
   display: none;
   padding: 32px 28px;
 }
 
+.result-monster-img {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.result-monster-img img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+  border-radius: 20px;
+}
+
 .result-type {
-  font-size: 34px;
+  font-size: 28px;
   font-weight: 500;
   color: #e6cf9e;
   letter-spacing: 2px;
@@ -307,36 +337,6 @@ button {
   color: #c9af7b;
 }
 
-.dimensions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin: 24px 0 28px;
-}
-
-.dimension {
-  background: #25252e;
-  padding: 14px 14px;
-  border-radius: 24px;
-  border: 1px solid #3f3f4b;
-}
-
-.dim-title {
-  font-weight: 500;
-  color: #d4be93;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.dim-score {
-  font-size: 12px;
-  color: #b0a48a;
-  background: rgba(55, 55, 70, 0.6);
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 30px;
-}
-
 .result-desc {
   line-height: 1.75;
   font-size: 15px;
@@ -344,9 +344,8 @@ button {
   background: rgba(45, 40, 35, 0.7);
   padding: 24px 24px;
   border-radius: 32px;
-  margin-top: 12px;
-  border: 1px solid rgba(200, 175, 120, 0.25);
-  letter-spacing: 0.3px;
+  margin-top: 20px;
+  border: 1px solid rgba(200, 160, 100, 0.3);
   white-space: pre-wrap;
 }
 
@@ -365,67 +364,36 @@ button {
   background: #454558;
 }
 
-/* 雨声控制按钮 */
-.sound-control {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  width: 52px;
-  height: 52px;
-  background: rgba(30, 30, 38, 0.85);
-  backdrop-filter: blur(8px);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 20;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  border: 1px solid rgba(180, 150, 110, 0.5);
-}
-
-.sound-control svg {
-  width: 26px;
-  height: 26px;
-  fill: none;
-  stroke: #d4b88c;
-  stroke-width: 1.8;
-}
-
-.sound-control .mute-icon, .sound-control .unmute-icon {
-  display: none;
-}
-.sound-control[data-muted="false"] .unmute-icon { display: block; }
-.sound-control[data-muted="true"] .mute-icon { display: block; }
-
+/* 移动端适配 */
 @media (max-width: 550px) {
   body { padding: 12px; }
-  .cover-title { font-size: 40px; letter-spacing: 4px; }
-  .cover-desc { max-width: 95%; }
+  .cover-title { font-size: 38px; letter-spacing: 4px; }
   .question-box { padding: 24px 20px; }
-  .question-title { font-size: 19px; }
-  .dimensions { grid-template-columns: 1fr; }
-  .result-type { font-size: 28px; }
-  .sound-control { bottom: 16px; right: 16px; width: 44px; height: 44px; }
+  .question-title { font-size: 18px; }
+  .result-type { font-size: 22px; }
+  .result-name { font-size: 20px; }
+  .result-monster-img img { width: 70px; height: 70px; }
 }
 </style>
 </head>
 <body>
-<div class="rain-bg"></div>
+<div class="bg-ambient">
+  <div class="fog-layer"></div>
+</div>
 
 <!-- 封面页 -->
 <div class="cover-page" id="coverPage">
-  <div class="cover-title">去往哪里</div>
-  <div class="cover-sub">· 人格灰域测写 ·</div>
-  <div class="cover-desc">你站在雨的背面，听不见回声。<br>有些痛在喉咙里结痂，<br>你一直想找一个地方，把它轻轻放下。</div>
-  <button class="start-btn" id="startTestBtn">步入雨幕</button>
+  <div class="cover-title">尖塔之影</div>
+  <div class="cover-sub">· 怪物灵魂测写 ·</div>
+  <div class="cover-desc">你听见篝火的低语，雾气中有一双眼睛正凝视着你。<br>那只怪物，或许就是你自己。</div>
+  <button class="start-btn" id="startTestBtn">步入雾中</button>
 </div>
 
-<!-- 主测试模块（初始隐藏） -->
-<div class="main" id="app">
+<!-- 主测试模块 -->
+<div class="main" id="app" style="display: none;">
   <div class="header">
-    <h1>灰域测写</h1>
-    <p>依恋·自我·现实·自律 | 无声的剖面</p>
+    <h1>尖塔之影</h1>
+    <p>攻击·意图·本能 | 你的怪物灵魂</p>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="count" id="questionCounter"></div>
@@ -436,47 +404,50 @@ button {
       <div class="choices" id="choicesContainer"></div>
     </div>
     <div class="nav">
-      <button class="btn-back" id="prevBtn" disabled>◀ 溯回</button>
-      <button class="btn-next" id="nextBtn">深处 ▶</button>
+      <button class="btn-back" id="prevBtn" disabled>◀ 回溯</button>
+      <button class="btn-next" id="nextBtn">回应意图 ▶</button>
     </div>
   </div>
 
   <div id="resultPanel" class="result-page" style="display: none;">
+    <div class="result-monster-img" id="resultMonsterImg"></div>
     <div class="result-type" id="resultTypeCode"></div>
-    <div class="result-name" id="resultNamePoetic"></div>
+    <div class="result-name" id="resultName"></div>
     <div class="tags" id="resultTags"></div>
-    <div class="dimensions" id="resultDimensions"></div>
     <div class="result-desc" id="resultDesc"></div>
-    <button class="restart-btn" id="restartTestBtn">重返雨幕</button>
+    <button class="restart-btn" id="restartTestBtn">重回篝火</button>
   </div>
 </div>
 
-<div class="sound-control" id="soundControl" data-muted="true" title="雨声">
-  <svg class="unmute-icon" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 9v6h4l5 4V5L7 9H3z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19 6a9 9 0 0 1 0 12"/></svg>
-  <svg class="mute-icon" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 9v6h4l5 4V5L7 9H3z"/><line x1="18" y1="6" x2="22" y2="10"/><line x1="22" y1="6" x2="18" y2="10"/></svg>
-</div>
-
 <script>
-// ======================= 雨声系统 (与原版一致) =======================
-class RainSound {
-  constructor() { this.audioCtx = null; this.source = null; this.gainNode = null; this.filterNode = null; this.isPlaying = false; this.isMuted = true; this.initiated = false; }
+// ======================= 环境音效：轻柔篝火+雾雨 =======================
+class AmbientSound {
+  constructor() {
+    this.audioCtx = null;
+    this.source = null;
+    this.gainNode = null;
+    this.isPlaying = false;
+    this.isMuted = false;
+    this.initiated = false;
+  }
   async init() {
     if (this.initiated) return;
     try {
       this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       this.gainNode = this.audioCtx.createGain();
-      this.filterNode = this.audioCtx.createBiquadFilter();
-      this.filterNode.type = 'lowpass';
-      this.filterNode.frequency.value = 1300;
-      this.filterNode.Q.value = 0.5;
-      this.gainNode.gain.value = this.isMuted ? 0 : 0.32;
-      this.gainNode.connect(this.filterNode);
-      this.filterNode.connect(this.audioCtx.destination);
+      this.gainNode.connect(this.audioCtx.destination);
+      this.gainNode.gain.value = this.isMuted ? 0 : 0.28;
+      // 生成柔和的白噪音 + 轻微波动模拟篝火与细雨
       const sampleRate = this.audioCtx.sampleRate;
-      const bufferSize = sampleRate * 2;
+      const bufferSize = sampleRate * 4;
       const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
       const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.75;
+      for (let i = 0; i < bufferSize; i++) {
+        let noise = (Math.random() * 2 - 1) * 0.55;
+        // 低频篝火噼啪感
+        if (Math.random() < 0.02) noise += (Math.random() * 0.3);
+        data[i] = noise;
+      }
       this.source = this.audioCtx.createBufferSource();
       this.source.buffer = buffer;
       this.source.loop = true;
@@ -485,174 +456,177 @@ class RainSound {
       this.initiated = true;
       if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
       this.isPlaying = true;
-    } catch(e) { console.warn(e); }
+    } catch(e) { console.warn("环境音初始化失败", e); }
   }
-  async mute() { if (!this.initiated) return; this.isMuted = true; if(this.gainNode) this.gainNode.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime+0.05); }
-  async unmute() { if (!this.initiated) await this.init(); this.isMuted = false; if(this.gainNode && this.audioCtx) { if(this.audioCtx.state === 'suspended') await this.audioCtx.resume(); this.gainNode.gain.linearRampToValueAtTime(0.32, this.audioCtx.currentTime+0.05); } }
+  async mute() { if (!this.initiated) return; this.isMuted = true; if(this.gainNode) this.gainNode.gain.linearRampToValueAtTime(0, this.audioCtx.currentTime+0.1); }
+  async unmute() { if (!this.initiated) await this.init(); this.isMuted = false; if(this.gainNode && this.audioCtx) { if(this.audioCtx.state === 'suspended') await this.audioCtx.resume(); this.gainNode.gain.linearRampToValueAtTime(0.28, this.audioCtx.currentTime+0.1); } }
   toggle() { this.isMuted ? this.unmute() : this.mute(); }
 }
-const rain = new RainSound();
-const soundBtn = document.getElementById('soundControl');
-function updateSoundIcon() { soundBtn.setAttribute('data-muted', rain.isMuted ? 'true' : 'false'); }
-soundBtn.addEventListener('click', async (e) => { e.stopPropagation(); if (!rain.initiated) await rain.init(); rain.toggle(); updateSoundIcon(); });
-let rainStarted = false;
-function startRainOnUserGesture() { if (rainStarted) return; rainStarted = true; rain.init().then(() => { rain.unmute(); updateSoundIcon(); }).catch(e=>console.warn); }
-document.body.addEventListener('click', startRainOnUserGesture, { once: true });
-document.body.addEventListener('touchstart', startRainOnUserGesture, { once: true });
+const ambient = new AmbientSound();
+let soundStarted = false;
+function startSoundOnGesture() { if (soundStarted) return; soundStarted = true; ambient.init().then(() => { ambient.unmute(); }).catch(e=>console.warn); }
+document.body.addEventListener('click', startSoundOnGesture, { once: true });
+document.body.addEventListener('touchstart', startSoundOnGesture, { once: true });
 
-// ======================= 雨丝生成 =======================
-(function initRain() {
-  const container = document.querySelector('.rain-bg');
-  if(!container) return;
-  for(let i=0;i<80;i++) {
-    const span = document.createElement('span');
-    span.style.left = Math.random()*100+'%';
-    span.style.height = (Math.random()*80+30)+'px';
-    span.style.animationDuration = (Math.random()*1.4+0.7)+'s';
-    span.style.animationDelay = (Math.random()*4)+'s';
-    container.appendChild(span);
+// 背景火光粒子
+(function addFireflies() {
+  const bg = document.querySelector('.bg-ambient');
+  if (!bg) return;
+  for (let i = 0; i < 40; i++) {
+    const fly = document.createElement('div');
+    fly.className = 'firefly';
+    fly.style.left = Math.random() * 100 + '%';
+    fly.style.top = Math.random() * 100 + '%';
+    fly.style.animationDelay = Math.random() * 6 + 's';
+    fly.style.animationDuration = 3 + Math.random() * 4 + 's';
+    bg.appendChild(fly);
   }
 })();
 
-// ======================= 题库 (保持原逻辑, 16题) =======================
+// ======================= 题目库（基于怪物攻击意图与行为逻辑） =======================
 const QUESTIONS = [
-  { dim: "as", text: "你害怕被重要的人遗弃，像旧物一样落灰", opts: [{label:"非常同意",weights:{a:2,s:0}},{label:"同意",weights:{a:1,s:0}},{label:"模糊",weights:{a:0,s:0}},{label:"不同意",weights:{a:0,s:1}},{label:"非常抗拒",weights:{a:0,s:2}}] },
-  { dim: "as", text: "你经常需要反复确认对方的爱，像求证一个谎言", opts: [{label:"非常同意",weights:{a:2,s:0}},{label:"同意",weights:{a:1,s:0}},{label:"中立",weights:{a:0,s:0}},{label:"不同意",weights:{a:0,s:1}},{label:"非常不同意",weights:{a:0,s:2}}] },
-  { dim: "as", text: "你能坦然接受伴侣的独立，不将自己黏附在他人身上", opts: [{label:"非常同意",weights:{a:0,s:2}},{label:"同意",weights:{a:0,s:1}},{label:"中立",weights:{a:0,s:0}},{label:"不同意",weights:{a:1,s:0}},{label:"非常不同意",weights:{a:2,s:0}}] },
-  { dim: "as", text: "你在关系中患得患失，像捧着一盏随时熄灭的烛火", opts: [{label:"非常同意",weights:{a:2,s:0}},{label:"同意",weights:{a:1,s:0}},{label:"不确定",weights:{a:0,s:0}},{label:"不同意",weights:{a:0,s:1}},{label:"完全不是",weights:{a:0,s:2}}] },
-  { dim: "df", text: "你常觉得自己不够好，像一件有裂痕的瓷器", opts: [{label:"非常同意",weights:{d:2,f:0}},{label:"同意",weights:{d:1,f:0}},{label:"中立",weights:{d:0,f:0}},{label:"不同意",weights:{d:0,f:1}},{label:"非常不同意",weights:{d:0,f:2}}] },
-  { dim: "df", text: "你对自己的价值有清晰认知，不易被外界评价摇动", opts: [{label:"非常同意",weights:{d:0,f:2}},{label:"同意",weights:{d:0,f:1}},{label:"模糊",weights:{d:0,f:0}},{label:"不同意",weights:{d:1,f:0}},{label:"完全否定",weights:{d:2,f:0}}] },
-  { dim: "df", text: "你太在意他人目光，经常委屈自己讨好", opts: [{label:"非常同意",weights:{d:2,f:0}},{label:"同意",weights:{d:1,f:0}},{label:"中立",weights:{d:0,f:0}},{label:"不同意",weights:{d:0,f:1}},{label:"非常不同意",weights:{d:0,f:2}}] },
-  { dim: "df", text: "你相信自己有能力面对挑战，敢于闯入未知", opts: [{label:"非常同意",weights:{d:0,f:2}},{label:"同意",weights:{d:0,f:1}},{label:"说不准",weights:{d:0,f:0}},{label:"不同意",weights:{d:1,f:0}},{label:"完全不能",weights:{d:2,f:0}}] },
-  { dim: "gh", text: "你更相信直觉与灵感，而非眼前的现实规则", opts: [{label:"非常同意",weights:{g:2,h:0}},{label:"同意",weights:{g:1,h:0}},{label:"中立",weights:{g:0,h:0}},{label:"不同意",weights:{g:0,h:1}},{label:"非常不同意",weights:{g:0,h:2}}] },
-  { dim: "gh", text: "你决策时优先考虑实际条件和可行性", opts: [{label:"非常同意",weights:{g:0,h:2}},{label:"同意",weights:{g:0,h:1}},{label:"中间",weights:{g:0,h:0}},{label:"不同意",weights:{g:1,h:0}},{label:"非常不同意",weights:{g:2,h:0}}] },
-  { dim: "gh", text: "你经常沉浸于幻想，对未来有不切实际的期待", opts: [{label:"非常同意",weights:{g:2,h:0}},{label:"同意",weights:{g:1,h:0}},{label:"偶尔",weights:{g:0,h:0}},{label:"很少",weights:{g:0,h:1}},{label:"从不",weights:{g:0,h:2}}] },
-  { dim: "gh", text: "你能清晰区分理想与现实，一步步踩实土地", opts: [{label:"非常同意",weights:{g:0,h:2}},{label:"同意",weights:{g:0,h:1}},{label:"中立",weights:{g:0,h:0}},{label:"不同意",weights:{g:1,h:0}},{label:"完全不是",weights:{g:2,h:0}}] },
-  { dim: "jk", text: "你严守计划，很少拖延，像钟摆一样精确", opts: [{label:"非常同意",weights:{j:2,k:0}},{label:"同意",weights:{j:1,k:0}},{label:"模糊",weights:{j:0,k:0}},{label:"不同意",weights:{j:0,k:1}},{label:"非常不同意",weights:{j:0,k:2}}] },
-  { dim: "jk", text: "你经常拖延，直到最后一刻才动手", opts: [{label:"非常同意",weights:{j:0,k:2}},{label:"同意",weights:{j:0,k:1}},{label:"有时",weights:{j:0,k:0}},{label:"很少",weights:{j:1,k:0}},{label:"从不",weights:{j:2,k:0}}] },
-  { dim: "jk", text: "你善于控制情绪与欲望，不轻易冲动", opts: [{label:"非常同意",weights:{j:2,k:0}},{label:"同意",weights:{j:1,k:0}},{label:"中立",weights:{j:0,k:0}},{label:"不同意",weights:{j:0,k:1}},{label:"非常不同意",weights:{j:0,k:2}}] },
-  { dim: "jk", text: "你喜欢随性自由，厌恶规则和计划的束缚", opts: [{label:"非常同意",weights:{j:0,k:2}},{label:"同意",weights:{j:0,k:1}},{label:"中间",weights:{j:0,k:0}},{label:"不同意",weights:{j:1,k:0}},{label:"非常不同意",weights:{j:2,k:0}}] }
+  { text: "当危险降临时，你的第一反应是？", weights: { cultist:1, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你如何看待规则与束缚？", weights: { cultist:0, slime:1, nob:0, sentry:2, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你会为了力量牺牲什么？", weights: { cultist:2, slime:0, nob:1, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:1, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你害怕被遗忘吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:2, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你倾向于正面交锋还是迂回削弱？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:1, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "当同伴陷入困境，你会？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:2, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你如何看待“时间”这个概念？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:2, heart:0, byrd:0 } },
+  { text: "你会为了更大的“圆满”而放弃自我吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:2, timeeater:0, heart:0, byrd:0 } },
+  { text: "你是否会将自己的痛苦转化为攻击他人的理由？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:1, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你享受追逐猎物吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:1, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你如何看待阴谋与背叛？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:2, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你渴望被理解，还是被畏惧？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:2, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "你相信直觉还是精密计算？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:1 } },
+  { text: "你会为了生存而抛弃所有情感吗？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:2, byrd:0 } },
+  { text: "你是团队中的协调者，还是独行的猎手？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:2, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } },
+  { text: "如果明天就是世界末日，你会做什么？", weights: { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 } }
 ];
 
-// ======================= 16种诗性人格描述 (全部重写为示例风格) =======================
-const POETIC_RESULTS = {
-  "ADGJ": { poeticName: "沉渊·紧缚", desc: "你不在此处，也不在他者的目光中。你一直有喉咙哽咽的钝痛无处外溢，你也清楚明白，这种痛只要拿出来，就会被他者的火焰彻底点燃，你不敢，所以你沉默，疏离，被浓烈的火光所灼伤不如被遗忘，你在灰色中越走越远，然而你知道，你的痛只是摆在盒子里，要是有人再近一点，近一点，你就被看穿谜底了。你把自己裹进规则的茧，用自律的绳索勒住颤栗，可深渊一直在凝视你。" },
-  "ADGK": { poeticName: "流放·雾径", desc: "你走在一条没有路标的雾径，焦虑如影随形，自我低语如同潮汐。你渴望远方却总被幻梦绊倒，随性是你的浮木也是牢笼。你说不出自己的形状，像一块尚未凝固的树脂，裹着半只蝴蝶。有人在雨里喊你，你听不清那是呼唤还是回声。" },
-  "ADHJ": { poeticName: "铁锈·刻度", desc: "你用现实一寸一寸丈量自己的不值，自律是你唯一的盔甲，却锈迹斑斑。你害怕失败所以先一步否定自己，每一个脚印都渗出水银般的重量。你习惯把愿望碾碎，拌进混凝土里，筑成一座没有窗户的堡垒。你听见雨声，以为是自己的心跳。" },
-  "ADHK": { poeticName: "浮尘·折影", desc: "你是一粒被风吹斜的尘，在现实的水洼里映出无数破碎的倒影。焦虑让你蜷缩，低自尊让你不敢伸手，随性是你唯一的呼吸方式。你不期待被看见，只怕被风吹散后无人记得你曾路过。雨滴打在水面，你的影子晃了晃，就消失了。" },
-  "AFGJ": { poeticName: "冷焰·高悬", desc: "你的自信是一道冷焰，照亮自己却灼伤靠近的飞蛾。焦虑在骨缝里嘶鸣，你用理想主义的铁网将它囚禁，自律让你站在高崖之上。你渴望拥抱又怕跌落，于是把爱意打磨成锋利的冰棱。雨落在你肩头，瞬间凝成霜。" },
-  "AFGK": { poeticName: "游灵·未驯", desc: "你是一缕不肯降落的烟，高自尊让你拒绝匍匐，焦虑却让你在风中颤栗。理想主义是你透明的翅膀，随性是你野生的血液。你穿过雨幕却从不为谁停留，路过的人只看见你模糊的轮廓，而你知道，你连自己都尚未驯服。" },
-  "AFHJ": { poeticName: "锚点·缄默", desc: "你像一只被钉在现实墙上的蝴蝶标本，翅膀仍有光泽，却不再扇动。高自尊让你昂首，焦虑让你彻夜难眠，你用自律的钉锤把每一寸不安敲进骨缝。你从不说疼，只把雨声当成背景，可墙上的影子一直在抖。" },
-  "AFHK": { poeticName: "薄暮·缓行", desc: "你在黄昏的边界踱步，自信是你的斗篷，焦虑是内衬的荆棘。你务实又随性，像一场不急不慢的雨。你承认孤独但从不哀求拥抱，你知道有些答案需要等天亮，可你偏爱薄暮——它既不灼人，也不彻底黑暗。" },
-  "SDGJ": { poeticName: "静壤·暗涌", desc: "你是一片安静的土壤，安全依恋让你不惧风雨，可低自尊让你总在向下沉。理想主义是你深埋的种子，自律是你均匀的呼吸。你以为自己平和，但地底有岩浆在慢慢改道。雨落进土壤，没有声音，只有湿润。" },
-  "SDGK": { poeticName: "苇草·无根", desc: "你像一株长在河岸的苇草，风吹来就弯腰，雨落下就承重。你安全却自我怀疑，理想主义让你仰望，随性让你飘摇。你从不对抗，只是轻轻摇摆，路过的人说你好温柔，只有你知道，你没有根。" },
-  "SDHJ": { poeticName: "石阶·微痕", desc: "你是被踩实的石阶，安全，低自尊，现实，自律。你承受所有重量却不发一言，岁月在你表面留下细密裂纹。你相信踏实就是意义，却在深夜听见体内有河流干涸的回声。雨滴打在石阶上，溅起很小的花，很快消失。" },
-  "SDHK": { poeticName: "浅滩·搁浅", desc: "你是一片浅浅的滩涂，安全感让你不怕潮汐，低自尊让你甘于留在原地。现实是你脚下的沙，随性是潮水来了又走。你从不驶向深海，你知道那里太冷。偶尔有贝壳被冲上来，你把它握了握，又放下。" },
-  "SFGJ": { poeticName: "孤峰·凝望", desc: "你是一座独立的峰，安全，高自尊，理想主义，高度自律。你俯瞰云海却从不下山，风霜把你磨成锐利的形状。你渴望对话，但每一句回声都撞回自己胸膛。雨落在峰顶，变成雪，更冷了。" },
-  "SFGK": { poeticName: "野火·漫游", desc: "你是一簇烧过荒原的野火，安全且自信，理想让你蔓延，随性让你不拘方向。你照亮了暗处也留下灰烬，你从不问该去哪里，风往哪儿吹你就往哪儿走。雨来了也不怕，你知道自己会在潮湿中等来下一次燃烧。" },
-  "SFHJ": { poeticName: "界碑·不锈", desc: "你是伫立在交界处的界碑，安全，高自尊，现实，自律。你清晰知道自己是什么，不是僵硬的石头，而是金属铸造的刻度。你承受所有标记却不磨损，雨把你洗得更亮。你唯一的问题是——你从不问自己疼不疼。" },
-  "SFHK": { poeticName: "雨镜·无尘", desc: "你像一面被雨水洗过的镜子，安全通透，高自尊明晰，现实务实，随性自由。你不抗拒任何倒影，也不为谁停留。你映出天空也映出泥泞，但你始终干净。雨停了，镜面还留着水珠，那是你唯一柔软的证据。" }
+// ======================= 16种怪物人格结果 =======================
+const MONSTER_RESULTS = {
+  cultist: { name: "邪教徒", desc: "你是尖塔最底层的信徒，穿着破旧的长袍，日夜低语着无人能懂的祈祷。你以为自己是在追寻信仰，其实只是在填补内心的空洞。你渴望被某股力量接纳，哪怕那力量终将吞噬你。每当有人路过，你都会抬起头，眼里燃烧着卑微而炽烈的期待——他们会不会是那个能听懂你呓语的人？", tags: "虔诚·卑微·回声", img: "https://static.wikia.nocookie.net/slaythespire/images/5/5a/Cultist.png" },
+  slime: { name: "史莱姆", desc: "你是一滩柔软的流体，没有固定的形状，也没有尖锐的棱角。你可以分裂自己，把痛苦分摊给每一个微小的分身。你不喜欢冲突，但一旦被挤压，就会用粘液黏住那些试图伤害你的人。其实你很清楚，你不是没有骨头，你只是把所有骨头都溶进了湿润的温柔里。", tags: "分裂·柔软·适应", img: "https://static.wikia.nocookie.net/slaythespire/images/6/64/Acid_Slime_M.png" },
+  nob: { name: "地精大块头", desc: "你的愤怒永远写在脸上，像一面没有遮挡的鼓皮。你不懂阴谋，也不屑伪装。每一拳都带着咆哮，每一击都拼尽全力。别人觉得你粗鲁，但你只是讨厌拐弯抹角——如果这个世界想伤害你，你就先把它砸碎。可有时候，夜深人静时，你也会摸摸自己发红的拳头，疑惑那股火到底烧给谁看。", tags: "暴怒·直率·野蛮", img: "https://static.wikia.nocookie.net/slaythespire/images/8/88/Gremlin_Nob.png" },
+  sentry: { name: "哨卫", desc: "你是一道沉默的关卡，矗立在所有人必经的路上。你不主动伤人，但也不会放任何人通过。你的职责就是注视，然后审判。你以为自己冷血，其实你比谁都更早看清了人类的贪婪与脆弱。你只是累了，累得不想再开口说话，只想用激光来替你说出那句——‘你不该来’。", tags: "审判·孤守·冷漠", img: "https://static.wikia.nocookie.net/slaythespire/images/3/3f/Sentry.png" },
+  looter: { name: "掠夺者", desc: "你总是在别人最脆弱的时候出现，像一只躲在暗处的乌鸦。你偷走的不只是金币，还有他们残存的希望。你告诉自己这个世界本来就是弱肉强食，可每当数着赃物时，你心里总有一个很小的声音在问：‘如果我也被抢过一次，还会变成这样吗？’", tags: "狡黠·投机·愧疚", img: "https://static.wikia.nocookie.net/slaythespire/images/4/43/Looter.png" },
+  chosen: { name: "被拣选者", desc: "你曾经也是人，只是选择了更古老的秘法。你的灵魂里住着一团紫色的火焰，它赋予你力量，也一点点灼烧你的记忆。你现在分不清那些低语是自己的还是邪神的。但你不会回头——因为回头就什么都没有了，而往前走，至少还有痛。", tags: "神秘·献祭·执迷", img: "https://static.wikia.nocookie.net/slaythespire/images/6/6b/Chosen.png" },
+  book: { name: "扎人的书", desc: "你是被封印的知识，每一页都刻着带血的文字。你不说话，但每个翻开你的人都会被无数尖刺扎伤。你以为自己是在保护那些秘密，其实你只是害怕有人读懂你之后，发现你其实什么都没写。", tags: "禁断·自毁·孤独", img: "https://static.wikia.nocookie.net/slaythespire/images/8/8b/Book_of_Stabbing.png" },
+  leader: { name: "地精首领", desc: "你站在一群混乱的小地精中间，假装自己有条不紊。你指挥他们攻击，也替他们承受伤害。你以为自己是领袖，其实你比任何人都孤独——因为没有人看见你头上的王冠是铁铸的，重得让你抬不起头。", tags: "担当·疲惫·伪装", img: "https://static.wikia.nocookie.net/slaythespire/images/6/6a/Gremlin_Leader.png" },
+  nemesis: { name: "天罚", desc: "你是因果律的化身，每一击都带着‘你活该’的烙印。你不恨任何人，只是无法容忍罪恶被遗忘。你挥舞着无形的镰刀，却连自己的影子都砍不断。有时候你也会想，如果有人能承受住你的审判，你是不是就可以退休了？", tags: "审判·宿命·孤高", img: "https://static.wikia.nocookie.net/slaythespire/images/9/9f/Nemesis.png" },
+  giant: { name: "大脑袋", desc: "你的脑袋很大，装满了千年的怨气。你每回合都在积累，等待那个一锤定音的瞬间。别人说你迟钝，其实你只是在等一个最痛快的时机——就像你等了一辈子，也没等来那句对不起。", tags: "隐忍·爆发·执念", img: "https://static.wikia.nocookie.net/slaythespire/images/a/a9/Giant_Head.png" },
+  repto: { name: "拜蛇术士", desc: "你躲在暗处，操弄着两条匕首般的毒蛇。你不亲自出手，但每一条蛇都是你的延伸。你享受猎物在猜疑中倒下，因为你太清楚——正面冲突总是太痛了，而背后，什么都不会看见。", tags: "诡诈·操控·多疑", img: "https://static.wikia.nocookie.net/slaythespire/images/d/d3/Reptomancer.png" },
+  awakened: { name: "觉醒者", desc: "你死过一次，然后带着更深的怒火回来了。你以为觉醒就是看透一切，结果只是看清了自己有多恨。你杀死那些弱小的信徒，把他们当成过去的自己。可每当战斗结束，你总会愣住——你究竟是在反抗命运，还是成为了它最忠实的奴仆？", tags: "重生·悲愤·虚无", img: "https://static.wikia.nocookie.net/slaythespire/images/a/a9/Awakened_One.png" },
+  donu: { name: "甜甜圈", desc: "你是甜美的圆环，你以为自己是完美的，直到你发现八角就在身边。你们彼此依靠，也彼此束缚。你给队友加糖，也给自己加糖，甜到腻，甜到忘了苦是什么味道。可每当有人咬下你们一口，你才发现——原来糖下面，是空的。", tags: "依赖·圆满·空壳", img: "https://static.wikia.nocookie.net/slaythespire/images/5/54/Donu.png" },
+  timeeater: { name: "时间吞噬者", desc: "你每隔几回合就要停下来，喘口气，然后加倍奉还。你憎恨那些试图一口气打完所有牌的人，因为你自己就是被时间一口一口吞掉的。你越活越慢，越慢越恨。可你知道吗？那些急着赶路的人，其实和你一样，都怕来不及。", tags: "沉重·报复·停滞", img: "https://static.wikia.nocookie.net/slaythespire/images/e/ec/Time_Eater.png" },
+  heart: { name: "腐化之心", desc: "你是尖塔的源头，是所有痛苦的起点。你以为自己在操控一切，其实你只是最痛的那一个。你的每一次跳动都在诉说着不甘，每一个出牌都在散播诅咒。你从不离开宝座，因为离开之后，你就不知道自己是谁了。", tags: "本源·绝望·孤绝", img: "https://static.wikia.nocookie.net/slaythespire/images/2/23/Corrupt_Heart.png" },
+  byrd: { name: "异鸟", desc: "你总是在空中盘旋，不愿落地。你以为自己看得更远，其实只是不敢着陆。你攻击一次就飞走，再回头，再飞走。你以为自己在戏耍敌人，其实你只是怕——怕一旦停下来，就再也没有力气飞了。", tags: "轻盈·逃避·徘徊", img: "https://static.wikia.nocookie.net/slaythespire/images/0/0b/Byrd.png" }
 };
 
-// 全局变量
-let userAnswers = new Array(QUESTIONS.length).fill(null);
-let currentIndex = 0;
-let scoreMap = { a:0, s:0, d:0, f:0, g:0, h:0, j:0, k:0 };
+// 简化版计分与匹配
+let answers = new Array(QUESTIONS.length).fill(null);
+let current = 0;
+let scoreMap = { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 };
 
-// DOM
-const coverPage = document.getElementById('coverPage');
-const mainApp = document.getElementById('app');
 const quizPanel = document.getElementById('quizPanel');
 const resultPanel = document.getElementById('resultPanel');
-const questionTextEl = document.getElementById('questionText');
+const questionText = document.getElementById('questionText');
 const choicesContainer = document.getElementById('choicesContainer');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const progressFill = document.getElementById('progressFill');
 const questionCounter = document.getElementById('questionCounter');
 
-function recalcScores() {
-  scoreMap = { a:0,s:0,d:0,f:0,g:0,h:0,j:0,k:0 };
-  for(let i=0;i<QUESTIONS.length;i++) {
-    let idx = userAnswers[i];
+function recalcScore() {
+  scoreMap = { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 };
+  for(let i=0; i<QUESTIONS.length; i++) {
+    let idx = answers[i];
     if(idx===null) continue;
-    let w = QUESTIONS[i].opts[idx]?.weights;
-    if(w) for(let [k,v] of Object.entries(w)) scoreMap[k]+=v;
+    let w = QUESTIONS[i].weights;
+    if(w) {
+      let keys = Object.keys(w);
+      if(keys.length>0 && idx<keys.length) {
+        let key = keys[idx];
+        if(scoreMap[key]!==undefined) scoreMap[key] += w[key];
+      }
+    }
   }
 }
-function getCode() {
-  let as = scoreMap.a > scoreMap.s ? 'A' : (scoreMap.s > scoreMap.a ? 'S' : (Math.random()<0.5?'A':'S'));
-  let df = scoreMap.d > scoreMap.f ? 'D' : (scoreMap.f > scoreMap.d ? 'F' : (Math.random()<0.5?'D':'F'));
-  let gh = scoreMap.g > scoreMap.h ? 'G' : (scoreMap.h > scoreMap.g ? 'H' : (Math.random()<0.5?'G':'H'));
-  let jk = scoreMap.j > scoreMap.k ? 'J' : (scoreMap.k > scoreMap.j ? 'K' : (Math.random()<0.5?'J':'K'));
-  return as+df+gh+jk;
+
+function getMonsterKey() {
+  let maxKey = 'cultist';
+  let maxVal = 0;
+  for(let k in scoreMap) {
+    if(scoreMap[k] > maxVal) { maxVal = scoreMap[k]; maxKey = k; }
+  }
+  return maxKey;
 }
+
 function updateProgress() {
-  let answered = userAnswers.filter(a=>a!==null).length;
+  let answered = answers.filter(a=>a!==null).length;
   progressFill.style.width = (answered/QUESTIONS.length)*100+'%';
   questionCounter.innerText = `${answered}/${QUESTIONS.length} 已答`;
 }
+
 function renderQuestion() {
-  let q = QUESTIONS[currentIndex];
-  questionTextEl.innerText = `${currentIndex+1}. ${q.text}`;
-  let selected = userAnswers[currentIndex];
+  let q = QUESTIONS[current];
+  questionText.innerText = `${current+1}. ${q.text}`;
+  let selected = answers[current];
   choicesContainer.innerHTML = '';
-  q.opts.forEach((opt,idx)=>{
+  let opts = ["选项A", "选项B", "选项C", "选项D"];
+  for(let i=0; i<4; i++) {
     let div = document.createElement('div');
-    div.className = 'choice' + (selected===idx ? ' active' : '');
-    div.innerText = opt.label;
-    div.addEventListener('click',()=>{
-      userAnswers[currentIndex]=idx;
-      recalcScores();
+    div.className = 'choice' + (selected===i ? ' active' : '');
+    div.innerText = opts[i];
+    div.addEventListener('click', ()=>{
+      answers[current] = i;
+      recalcScore();
       renderQuestion();
       updateProgress();
     });
     choicesContainer.appendChild(div);
-  });
+  }
   updateProgress();
-  prevBtn.disabled = (currentIndex===0);
-  nextBtn.innerText = (currentIndex===QUESTIONS.length-1) ? "✨ 浮现结果" : "下一题 →";
+  prevBtn.disabled = (current===0);
+  nextBtn.innerText = (current===QUESTIONS.length-1) ? "✨ 窥见真身" : "下一意图 →";
 }
+
 function showResult() {
-  for(let i=0;i<userAnswers.length;i++) if(userAnswers[i]===null) { alert(`请完成第 ${i+1} 题`); currentIndex=i; renderQuestion(); return; }
-  recalcScores();
-  let code = getCode();
-  let data = POETIC_RESULTS[code] || POETIC_RESULTS["SFHK"];
-  document.getElementById('resultTypeCode').innerText = code + " · 灰域编码";
-  document.getElementById('resultNamePoetic').innerText = data.poeticName;
+  for(let i=0;i<answers.length;i++) if(answers[i]===null) { alert(`请完成第 ${i+1} 题`); current=i; renderQuestion(); return; }
+  recalcScore();
+  let key = getMonsterKey();
+  let data = MONSTER_RESULTS[key];
+  if(!data) data = MONSTER_RESULTS.cultist;
+  document.getElementById('resultTypeCode').innerText = key.toUpperCase() + " · 尖塔之魂";
+  document.getElementById('resultName').innerText = data.name;
   document.getElementById('resultDesc').innerText = data.desc;
-  // 展示维度量表（轻量化）
-  let dims = [
-    { name:"依恋", left:scoreMap.a, right:scoreMap.s, leftL:"焦虑", rightL:"安全", final:scoreMap.a>scoreMap.s?"焦虑偏倚":(scoreMap.s>scoreMap.a?"安全偏倚":"潮汐平衡") },
-    { name:"自我", left:scoreMap.d, right:scoreMap.f, leftL:"低自尊", rightL:"高自尊", final:scoreMap.d>scoreMap.f?"低自尊":(scoreMap.f>scoreMap.d?"高自尊":"浮标中置") },
-    { name:"现实", left:scoreMap.g, right:scoreMap.h, leftL:"理想", rightL:"现实", final:scoreMap.g>scoreMap.h?"理想偏执":(scoreMap.h>scoreMap.g?"现实刻度":"镜中界限") },
-    { name:"自律", left:scoreMap.j, right:scoreMap.k, leftL:"自律", rightL:"随性", final:scoreMap.j>scoreMap.k?"紧缚":(scoreMap.k>scoreMap.j?"流散":"游移不定") }
-  ];
-  document.getElementById('resultDimensions').innerHTML = dims.map(d=>`<div class="dimension"><div class="dim-title">${d.name} · ${d.final}</div><div class="dim-score">${d.leftL} ${d.left} ｜ ${d.rightL} ${d.right}</div></div>`).join('');
-  document.getElementById('resultTags').innerHTML = `<span class="tag">灰域测写</span><span class="tag">雨声掩体</span><span class="tag">未寄出的信</span>`;
+  document.getElementById('resultTags').innerHTML = data.tags.split('·').map(t=>`<span class="tag">${t.trim()}</span>`).join('');
+  document.getElementById('resultMonsterImg').innerHTML = `<img src="${data.img}" alt="${data.name}" onerror="this.src='https://via.placeholder.com/100x100?text=${data.name}'">`;
   quizPanel.style.display = 'none';
   resultPanel.style.display = 'block';
 }
+
 function resetTest() {
-  userAnswers.fill(null);
-  currentIndex = 0;
-  scoreMap = { a:0,s:0,d:0,f:0,g:0,h:0,j:0,k:0 };
+  answers.fill(null);
+  current = 0;
+  scoreMap = { cultist:0, slime:0, nob:0, sentry:0, looter:0, chosen:0, book:0, leader:0, nemesis:0, giant:0, repto:0, awakened:0, donu:0, timeeater:0, heart:0, byrd:0 };
   quizPanel.style.display = 'block';
   resultPanel.style.display = 'none';
   renderQuestion();
 }
+
 function bindEvents() {
   nextBtn.addEventListener('click',()=>{
-    if(userAnswers[currentIndex]===null) { alert("请先选择一项"); return; }
-    if(currentIndex===QUESTIONS.length-1) { if(userAnswers.every(v=>v!==null)) showResult(); else alert("还有未答"); }
-    else { currentIndex++; renderQuestion(); }
+    if(answers[current]===null) { alert("请先选择一项"); return; }
+    if(current===QUESTIONS.length-1) { if(answers.every(v=>v!==null)) showResult(); else alert("还有未答"); }
+    else { current++; renderQuestion(); }
   });
-  prevBtn.addEventListener('click',()=>{ if(currentIndex>0){ currentIndex--; renderQuestion(); } });
+  prevBtn.addEventListener('click',()=>{ if(current>0){ current--; renderQuestion(); } });
   document.getElementById('restartTestBtn').addEventListener('click',resetTest);
   document.getElementById('startTestBtn').addEventListener('click',()=>{
-    coverPage.style.display = 'none';
-    mainApp.style.display = 'block';
-    resetTest(); 
+    document.getElementById('coverPage').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    resetTest();
   });
 }
 bindEvents();
