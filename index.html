@@ -6,6 +6,7 @@
 <title>多维人格深度测试 | 8属性完整分析</title>
 <style>
 * {
+ * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -19,54 +20,54 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-attachment: fixed;
   position: relative;
   overflow-x: hidden;
 }
 
-/* 黄色漫天小星星 + 缓慢飘动背景 */
-body::before {
-  content: '';
+/* 独立的星星背景层，比伪元素兼容性更好 */
+.stars-bg {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none; /* 不会挡住点击、不影响操作 */
+  pointer-events: none; /* 不影响点击 */
+  /* 星星尺寸全部放大 2 倍 */
   background-image: 
-    radial-gradient(circle at 5% 12%, #ffd966 1px, transparent 1px),
-    radial-gradient(circle at 12% 45%, #fff380 1.4px, transparent 1.4px),
-    radial-gradient(circle at 22% 78%, #ffd966 1px, transparent 1px),
-    radial-gradient(circle at 35% 22%, #fff380 1.3px, transparent 1.3px),
-    radial-gradient(circle at 48% 65%, #ffd966 1px, transparent 1px),
-    radial-gradient(circle at 55% 8%, #fff380 1.5px, transparent 1.5px),
-    radial-gradient(circle at 68% 38%, #ffd966 1.2px, transparent 1.2px),
-    radial-gradient(circle at 75% 72%, #fff380 1px, transparent 1px),
-    radial-gradient(circle at 88% 18%, #ffd966 1.4px, transparent 1.4px),
-    radial-gradient(circle at 95% 55%, #fff380 1.2px, transparent 1.2px),
-    radial-gradient(circle at 18% 28%, #ffd966 1px, transparent 1px),
-    radial-gradient(circle at 42% 82%, #fff380 1.3px, transparent 1.3px),
-    radial-gradient(circle at 62% 52%, #ffd966 1.1px, transparent 1.1px),
-    radial-gradient(circle at 82% 85%, #fff380 1px, transparent 1px);
+    radial-gradient(circle at 5% 12%, #ffd966 3px, transparent 3px),
+    radial-gradient(circle at 12% 45%, #fff380 3.4px, transparent 3.4px),
+    radial-gradient(circle at 22% 78%, #ffd966 3px, transparent 3px),
+    radial-gradient(circle at 35% 22%, #fff380 3.3px, transparent 3.3px),
+    radial-gradient(circle at 48% 65%, #ffd966 3px, transparent 3px),
+    radial-gradient(circle at 55% 8%, #fff380 3.5px, transparent 3.5px),
+    radial-gradient(circle at 68% 38%, #ffd966 3.2px, transparent 3.2px),
+    radial-gradient(circle at 75% 72%, #fff380 3px, transparent 3px),
+    radial-gradient(circle at 88% 18%, #ffd966 3.4px, transparent 3.4px),
+    radial-gradient(circle at 95% 55%, #fff380 3.2px, transparent 3.2px),
+    radial-gradient(circle at 18% 28%, #ffd966 3px, transparent 3px),
+    radial-gradient(circle at 42% 82%, #fff380 3.3px, transparent 3.3px),
+    radial-gradient(circle at 62% 52%, #ffd966 3.1px, transparent 3.1px),
+    radial-gradient(circle at 82% 85%, #fff380 3px, transparent 3px);
   background-size: 100% 100%;
-  animation: starMove 70s linear infinite;
-  opacity: 0.8;
-  z-index: -1;
+  /* 动画从70s改成20s，速度更快 */
+  animation: starMove 20s linear infinite;
+  opacity: 1; /* 去掉透明度，星星更亮 */
+  z-index: 0; /* 放在卡片下面 */
 }
 
-/* 星星缓慢飘动动画 */
+/* 星星动画：速度更快，飘动幅度更大 */
 @keyframes starMove {
   0% {
     transform: translateY(0) translateX(0);
   }
   25% {
-    transform: translateY(-12px) translateX(6px);
+    transform: translateY(-30px) translateX(15px);
   }
   50% {
-    transform: translateY(-6px) translateX(-6px);
+    transform: translateY(-15px) translateX(-15px);
   }
   75% {
-    transform: translateY(-18px) translateX(4px);
+    transform: translateY(-45px) translateX(10px);
   }
   100% {
     transform: translateY(0) translateX(0);
@@ -74,13 +75,15 @@ body::before {
 }
 
 .main {
+  position: relative;
+  z-index: 1; /* 卡片层级比星星高，不会被挡住 */
   max-width: 720px;
   width: 100%;
   margin: 0 auto;
   background: rgba(255,255,255,0.94);
-  backdrop-filter:blur(0px);
+  backdrop-filter: blur(0px);
   border-radius: 40px;
-  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.35),0 0 0 1px rgba(59,130,246,0.2);
+  box-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(59,130,246,0.2);
   overflow: hidden;
   transition: all 0.2s ease;
 }
