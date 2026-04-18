@@ -273,14 +273,16 @@ button {
   margin-bottom: 20px;
 }
 
-.result-monster-img img {
+.result-monster-img div {
   width: 100px;
   height: 100px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
-  border-radius: 20px;
   background: #2a2a34;
-  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 56px;
 }
 
 .result-type {
@@ -351,7 +353,6 @@ button {
   .question-title { font-size: 18px; }
   .result-type { font-size: 22px; }
   .result-name { font-size: 20px; }
-  .result-monster-img img { width: 70px; height: 70px; }
 }
 </style>
 </head>
@@ -457,12 +458,12 @@ document.body.addEventListener('touchstart', startRainOnGesture, { once: true })
 
 // ======================= 生成120个怪物数据（塔1+塔2） =======================
 const MONSTER_LIST = [
-  // 塔1 普通怪物 (36个)
+  // 塔1 经典怪物 (36个)
   "邪教徒","史莱姆(S)","史莱姆(L)","地精大块头","哨卫","掠夺者","被拣选者","扎人的书","地精首领",
   "天罚","大脑袋","拜蛇术士","觉醒者","甜甜圈","时间吞噬者","腐化之心","异鸟","蛇眼术士",
   "荆棘球","蘑菇怪","熊","盗贼","百夫长","神秘法师","扭曲团块","暗夜精怪","颚虫","甲壳怪",
   "真菌兽","球形守卫","奴隶贩子","小地精","尖塔蔓藤","咔咔盗贼","红地精","蓝地精",
-  // 塔2 新增怪物 (杀戮尖塔2 已知及扩展)
+  // 塔2 新增怪物 (84个，凑足120)
   "尖塔铁匠","锈蚀骑士","枯萎花妖","镜中幽灵","裂隙行者","琥珀守卫","深渊凝视者","咒术傀儡",
   "骨龙幼崽","雷光蝶","霜晶虫","血月狼","影缝魔","熔核巨像","紫雾巫妖","荆棘女王",
   "砂时虫","虚空卵","腐沼巨口","灵体学者","荆棘战车","幻影射手","古墓守护者","灾厄之眼",
@@ -470,16 +471,18 @@ const MONSTER_LIST = [
   "虹吸怪","余烬鸟","腐根树精","潮汐唤者","虚空幼蛛","熵变怪","诅咒之棺","静默侍僧",
   "骸骨法师","贪婪蠕虫","回声聚合体","咒刃刺客","影舞者","苍白屠夫","夜嚎者","锈铁巨兵",
   "裂魂妖","风暴之灵","地脉蛀虫","符文守护者","灵质史莱姆","暗影执政官","熔岩猎犬","翡翠龙裔",
-  "水晶哨兵","黑铁巨人","迷雾幽灵","幻象编织者","厄运使者","虚空吞噬者","尖塔之心(堕化)","终末观测者"
+  "水晶哨兵","黑铁巨人","迷雾幽灵","幻象编织者","厄运使者","虚空吞噬者","尖塔之心(堕化)","终末观测者",
+  "幽暗徘徊者","锈蚀弩车","疫病孢囊","寒霜侍从","燃烬魔像","电击鳗","岩甲龟","毒液花",
+  "月光蛾","砂暴虫","怨灵聚合体","锈铁卫兵","咒缚者","深渊蛞蝓","晶化龙","灰烬使者"
 ];
 // 确保正好120个
 while(MONSTER_LIST.length < 120) MONSTER_LIST.push("尖塔幽魂" + (MONSTER_LIST.length-100));
-const MONSTER_KEYS = MONSTER_LIST.map((name, idx) => "m"+idx);
+const MONSTER_KEYS = MONSTER_LIST.map((_, idx) => "m"+idx);
 // 构建详细数据
 const MONSTER_DATA = {};
 for (let i = 0; i < MONSTER_LIST.length; i++) {
   const name = MONSTER_LIST[i];
-  const tagsList = ["雨夜","孤影","低语","徘徊","执念","暗涌","锈蚀","余烬"];
+  const tagsList = ["雨夜","孤影","低语","徘徊","执念","暗涌","锈蚀","余烬","寒霜","烈焰","雷光","暗影"];
   const tag = tagsList[ i % tagsList.length ] + "·" + tagsList[(i+3)%tagsList.length];
   const descs = [
     `你是${name}，在尖塔的某个角落静静等待。雨水打湿了你的轮廓，却冲不淡你内心的执拗。你曾有过名字，但早已被遗忘。你只记得自己要做一件事——等一个人，或杀一个人，或只是证明自己存在过。`,
@@ -492,12 +495,11 @@ for (let i = 0; i < MONSTER_LIST.length; i++) {
     name: name,
     desc: desc,
     tags: tag,
-    img: "" // 使用emoji降级
+    emoji: ["🐉","👹","👻","🐺","🕷️","🦇","🐍","🦂","🌿","🔥","❄️","⚡","💀","👁️","🧠","🩸"][i % 16]
   };
 }
 
-// ======================= 64道题目（符合杀戮尖塔风格） =======================
-const QUESTIONS = [];
+// ======================= 64道题目 + 为每道题动态生成4个不同的选项 =======================
 const questionTemplates = [
   "当第一滴雨落在你的额头，你会？",
   "你如何看待这座不断生长的尖塔？",
@@ -563,22 +565,530 @@ const questionTemplates = [
   "你如何看待“终点”？",
   "如果明天就是尖塔崩塌，你会？"
 ];
-// 生成64道，每道4个选项
-for (let i = 0; i < 64; i++) {
-  const base = i % questionTemplates.length;
-  const text = questionTemplates[base];
-  const opts = [
-    "毫不犹豫地迎上去",
-    "先观察，再决定",
-    "转身离开，不纠缠",
-    "用计谋设下陷阱"
+
+// 为每个题目生成4个不同的、符合语境的选项
+function generateOptionsForQuestion(questionText, index) {
+  // 根据问题关键词生成不同风格的选项
+  const lower = questionText.toLowerCase();
+  // 定义一些通用选项模组，但根据问题做调整
+  if (lower.includes("雨")) {
+    return [
+      "伸出双手，感受雨的温度，仿佛在听它说话",
+      "躲进最近的屋檐，静静观察雨幕",
+      "让雨淋湿全身，无所谓，反正早已湿透",
+      "对着雨低声说出一个秘密，希望它被带走"
+    ];
+  }
+  if (lower.includes("尖塔")) {
+    return [
+      "尖塔是牢笼，必须用暴力挣脱",
+      "尖塔是迷宫，需要耐心解构每一层",
+      "尖塔是狩猎场，猎物和猎人角色互换",
+      "尖塔是旧神的尸骸，藏着禁忌知识"
+    ];
+  }
+  if (lower.includes("弱小") || lower.includes("生物")) {
+    return [
+      "直接扑杀，不留活口，弱肉强食",
+      "尾随它，等它放松警惕再动手",
+      "发出威胁把它吓跑，不恋战",
+      "放过它，也许有一天它会回报你"
+    ];
+  }
+  if (lower.includes("封印") || lower.includes("力量")) {
+    return [
+      "愤怒地冲击封印，直到流血",
+      "寻找解除封印的方法，不择手段",
+      "接受现实，用仅剩的力量活下去",
+      "假装顺从，暗中积蓄反扑"
+    ];
+  }
+  if (lower.includes("直觉") || lower.includes("计算")) {
+    return [
+      "直觉，因为反应快过思考",
+      "计算，每一步都要精确",
+      "两者结合，看情况而定",
+      "完全随机，让命运决定"
+    ];
+  }
+  if (lower.includes("背叛")) {
+    return [
+      "背叛者必须死，绝不原谅",
+      "背叛是生存常态，我会更小心",
+      "我会先背叛，以免被背叛",
+      "背叛让我心碎，但也让我更强"
+    ];
+  }
+  if (lower.includes("选择") && lower.includes("成为")) {
+    return [
+      "成为最强大的存在，无人能敌",
+      "成为自由的风，不受任何束缚",
+      "成为守护者，保护重要的人",
+      "成为影子，默默观察一切"
+    ];
+  }
+  if (lower.includes("遗忘")) {
+    return [
+      "害怕，所以拼命留下痕迹",
+      "不怕，遗忘是另一种自由",
+      "无所谓，反正我记不住别人",
+      "我会让所有人都记住我的恐惧"
+    ];
+  }
+  if (lower.includes("诅咒")) {
+    return [
+      "诅咒是弱者的呻吟，无视它",
+      "诅咒是一种力量，可以反过来利用",
+      "我会将诅咒转嫁给敌人",
+      "我身上早已布满诅咒，不在乎了"
+    ];
+  }
+  if (lower.includes("同伴") && lower.includes("困境")) {
+    return [
+      "独自冲锋，把敌人全部击倒",
+      "指挥同伴，用战术配合解围",
+      "假装没看见，自保最重要",
+      "牺牲自己，换取同伴撤离"
+    ];
+  }
+  if (lower.includes("追逐") || lower.includes("猎物")) {
+    return [
+      "享受追逐的快感，慢慢玩弄",
+      "速战速决，不给喘息机会",
+      "设下陷阱，让猎物自投罗网",
+      "不追逐，等待猎物自己送上门"
+    ];
+  }
+  if (lower.includes("规则")) {
+    return [
+      "规则是用来打破的",
+      "规则是弱者的护盾",
+      "我会遵守规则，然后利用它",
+      "根本没有规则，只有力量"
+    ];
+  }
+  if (lower.includes("牺牲") && lower.includes("记忆")) {
+    return [
+      "愿意，力量比记忆重要",
+      "不愿意，失去记忆等于失去自我",
+      "看情况，可以牺牲一部分",
+      "我早已没有值得保留的记忆"
+    ];
+  }
+  if (lower.includes("情绪")) {
+    return [
+      "愤怒，像岩浆一样滚烫",
+      "恐惧，像冰锥刺入骨髓",
+      "孤独，像永不愈合的伤口",
+      "仇恨，像慢性毒药"
+    ];
+  }
+  if (lower.includes("命运")) {
+    return [
+      "命运就是用来砸碎的",
+      "或许一切早已注定",
+      "我只信自己创造的因果",
+      "命运？那是弱者的借口"
+    ];
+  }
+  if (lower.includes("耳语") || lower.includes("低语")) {
+    return [
+      "愤怒地让它闭嘴",
+      "仔细倾听，试图理解",
+      "恐惧地逃开",
+      "利用耳语操控敌人"
+    ];
+  }
+  if (lower.includes("单独") || lower.includes("团队")) {
+    return [
+      "单独行动，不受牵绊",
+      "团队配合，互补弱点",
+      "视情况而定，有时独行有时组队",
+      "指挥团队，但保持距离"
+    ];
+  }
+  if (lower.includes("死亡")) {
+    return [
+      "不怕，死了也要拉垫背",
+      "怕，所以我会更谨慎",
+      "死亡不过是另一种形态",
+      "我早已死过，现在只剩恨"
+    ];
+  }
+  if (lower.includes("保护") && lower.includes("牺牲")) {
+    return [
+      "绝不会为任何人牺牲",
+      "如果是重要的人可以",
+      "那得看值不值得",
+      "我只会为复仇牺牲"
+    ];
+  }
+  if (lower.includes("时间")) {
+    return [
+      "时间是敌人，必须打败它",
+      "时间是朋友，慢慢来",
+      "时间无所谓，我永生不死",
+      "时间会吞噬一切，包括我"
+    ];
+  }
+  if (lower.includes("愤怒")) {
+    return [
+      "瞬间爆发，很快消散",
+      "持续很久，直到复仇完成",
+      "压抑在心底，从不外露",
+      "转化为力量，用在战斗中"
+    ];
+  }
+  if (lower.includes("攻击") || lower.includes("防御")) {
+    return [
+      "攻击是最好的防御",
+      "防御是生存的基石",
+      "攻守兼备，平衡发展",
+      "出其不意，攻其不备"
+    ];
+  }
+  if (lower.includes("秘密")) {
+    return [
+      "秘密是武器，握在自己手里",
+      "秘密是负担，想找人分担",
+      "我不藏秘密，因为不值得",
+      "用秘密交换利益"
+    ];
+  }
+  if (lower.includes("计谋") && lower.includes("识破")) {
+    return [
+      "恼羞成怒直接硬刚",
+      "立刻撤退另寻时机",
+      "假装投降再反咬",
+      "沉默不语，等待下一次机会"
+    ];
+  }
+  if (lower.includes("黑暗")) {
+    return [
+      "害怕，所以尽量待在光亮处",
+      "不害怕，黑暗是我的盟友",
+      "无所谓，反正看不清",
+      "喜欢黑暗，因为可以隐藏"
+    ];
+  }
+  if (lower.includes("复仇")) {
+    return [
+      "复仇是唯一动力",
+      "复仇没有意义，放下吧",
+      "我会等待，直到完美时机",
+      "用复仇来掩盖其他痛苦"
+    ];
+  }
+  if (lower.includes("相信别人")) {
+    return [
+      "从不相信任何人",
+      "只相信少数经过考验的人",
+      "很容易相信，经常被骗",
+      "假装相信，其实从不信任"
+    ];
+  }
+  if (lower.includes("财富")) {
+    return [
+      "财富就是力量，必须囤积",
+      "财富是身外之物，够用就好",
+      "用财富换取权力",
+      "财富会引来杀身之祸"
+    ];
+  }
+  if (lower.includes("受伤")) {
+    return [
+      "愤怒加倍，攻击更疯狂",
+      "暂时撤退，舔舐伤口",
+      "假装虚弱引诱敌人",
+      "将痛苦转化为诅咒"
+    ];
+  }
+  if (lower.includes("知识")) {
+    return [
+      "知识是钥匙，可以打开任何门",
+      "知识是毒药，知道越多越痛苦",
+      "我只想知道有用的知识",
+      "知识会让人疯狂"
+    ];
+  }
+  if (lower.includes("环境") && lower.includes("战斗")) {
+    return [
+      "开阔的战场，正面交锋",
+      "狭窄的通道，限制敌人",
+      "黑暗的洞穴，隐藏自己",
+      "布满机关的密室，借力打力"
+    ];
+  }
+  if (lower.includes("孤独")) {
+    return [
+      "享受孤独，自由自在",
+      "害怕孤独，需要陪伴",
+      "习惯了孤独，无所谓",
+      "用孤独来磨炼自己"
+    ];
+  }
+  if (lower.includes("抛弃情感")) {
+    return [
+      "愿意，情感是弱点",
+      "不愿意，情感是活着的证明",
+      "看情况，必要时可以",
+      "我已经没有情感了"
+    ];
+  }
+  if (lower.includes("权力")) {
+    return [
+      "权力是终极目标",
+      "权力是毒药，会腐蚀",
+      "我只想要够用的权力",
+      "权力会让人孤独"
+    ];
+  }
+  if (lower.includes("弱点")) {
+    return [
+      "没有弱点",
+      "有，但不会告诉任何人",
+      "我的弱点正是我的力量",
+      "每个人都有弱点，我也一样"
+    ];
+  }
+  if (lower.includes("承诺")) {
+    return [
+      "从不承诺，因为无法保证",
+      "承诺必践，哪怕付出代价",
+      "承诺只是说说而已",
+      "用承诺换取信任"
+    ];
+  }
+  if (lower.includes("无法战胜") || lower.includes("敌人")) {
+    return [
+      "死战到底，绝不退缩",
+      "暂时撤退，寻找弱点",
+      "设下陷阱，用智慧取胜",
+      "投降，活下来才有机会"
+    ];
+  }
+  if (lower.includes("变化")) {
+    return [
+      "拥抱变化，顺势而为",
+      "抗拒变化，坚守不变",
+      "利用变化，制造混乱",
+      "变化与我无关"
+    ];
+  }
+  if (lower.includes("冷静") || lower.includes("狂热")) {
+    return [
+      "冷静，理智胜过一切",
+      "狂热，激情点燃力量",
+      "表面冷静，内心狂热",
+      "看对手决定"
+    ];
+  }
+  if (lower.includes("牺牲")) {
+    return [
+      "牺牲是必要的代价",
+      "尽量避免牺牲",
+      "只牺牲敌人",
+      "牺牲自己也要赢"
+    ];
+  }
+  if (lower.includes("不择手段")) {
+    return [
+      "会，结果最重要",
+      "不会，我有底线",
+      "看情况，必要时可以",
+      "我已经不择手段很久了"
+    ];
+  }
+  if (lower.includes("恐惧")) {
+    return [
+      "用愤怒掩盖恐惧",
+      "直面恐惧，直到它消失",
+      "逃跑，远离恐惧源",
+      "利用恐惧控制别人"
+    ];
+  }
+  if (lower.includes("正义")) {
+    return [
+      "正义是弱者的幻想",
+      "我就是正义",
+      "正义由胜利者书写",
+      "没有正义，只有立场"
+    ];
+  }
+  if (lower.includes("力量") && lower.includes("智慧")) {
+    return [
+      "力量，碾压一切",
+      "智慧，四两拨千斤",
+      "两者都需要",
+      "运气最重要"
+    ];
+  }
+  if (lower.includes("谎言")) {
+    return [
+      "谎言是工具，经常使用",
+      "厌恶谎言，只说真话",
+      "用谎言保护自己",
+      "看穿谎言，但不说破"
+    ];
+  }
+  if (lower.includes("忏悔")) {
+    return [
+      "会，但从不改变",
+      "不会，我没有错",
+      "会，然后继续犯错",
+      "忏悔没有意义"
+    ];
+  }
+  if (lower.includes("希望")) {
+    return [
+      "希望是最后的火种",
+      "希望是骗人的",
+      "我给别人希望，自己不抱希望",
+      "希望会害死人"
+    ];
+  }
+  if (lower.includes("独自一人")) {
+    return [
+      "思考过去，后悔很多事",
+      "计划未来，如何变强",
+      "什么都不想，放空",
+      "害怕，所以找事做"
+    ];
+  }
+  if (lower.includes("痛苦")) {
+    return [
+      "痛苦让我更强",
+      "痛苦无法忍受，想逃避",
+      "分享痛苦，减轻负担",
+      "把痛苦施加给别人"
+    ];
+  }
+  if (lower.includes("主动寻求战斗")) {
+    return [
+      "会，战斗让我活着",
+      "不会，避免不必要的冲突",
+      "视对手强弱而定",
+      "只为了复仇而战"
+    ];
+  }
+  if (lower.includes("和平")) {
+    return [
+      "和平是奢侈，我不配",
+      "渴望和平，但身不由己",
+      "和平就是无聊",
+      "用武力维持的和平"
+    ];
+  }
+  if (lower.includes("梦想")) {
+    return [
+      "成为最强",
+      "找到归宿",
+      "毁灭尖塔",
+      "没有梦想，活着就好"
+    ];
+  }
+  if (lower.includes("永恒")) {
+    return [
+      "永恒是诅咒",
+      "渴望永恒，但不可能",
+      "永恒没有意义",
+      "我已经接近永恒了"
+    ];
+  }
+  if (lower.includes("失败")) {
+    return [
+      "愤怒，然后加倍努力",
+      "沮丧，需要时间恢复",
+      "分析原因，避免重蹈覆辙",
+      "无所谓，失败是常态"
+    ];
+  }
+  if (lower.includes("救赎")) {
+    return [
+      "相信救赎，但我不配",
+      "救赎是骗人的",
+      "用行动救赎自己",
+      "不需要救赎"
+    ];
+  }
+  if (lower.includes("回忆") || lower.includes("未来")) {
+    return [
+      "回忆，因为过去无法改变",
+      "未来，因为还有机会",
+      "两者都重要",
+      "都不重要，只有现在"
+    ];
+  }
+  if (lower.includes("疯狂")) {
+    return [
+      "疯狂是清醒的另一种形式",
+      "害怕疯狂，保持理智",
+      "我早就疯了",
+      "利用疯狂吓退敌人"
+    ];
+  }
+  if (lower.includes("改变自己")) {
+    return [
+      "会，为了重要的人",
+      "不会，坚持自我",
+      "会，但只为了变强",
+      "已经改变太多，回不去了"
+    ];
+  }
+  if (lower.includes("寂静")) {
+    return [
+      "享受寂静，那是我的声音",
+      "害怕寂静，需要噪音",
+      "寂静中听见自己",
+      "寂静是战斗的前奏"
+    ];
+  }
+  if (lower.includes("内心住着什么")) {
+    return [
+      "住着一头野兽",
+      "住着一个小孩",
+      "住着一片废墟",
+      "什么都没有"
+    ];
+  }
+  if (lower.includes("终点")) {
+    return [
+      "终点是解脱",
+      "终点是新的开始",
+      "没有终点",
+      "我不想看到终点"
+    ];
+  }
+  if (lower.includes("尖塔崩塌")) {
+    return [
+      "在废墟上咆哮，成为新的王",
+      "寻找新的藏身处继续生存",
+      "终于可以休息了",
+      "无所谓，反正我无处可去"
+    ];
+  }
+  // 默认选项（保证每道题都有4个不同选项）
+  return [
+    "毫不犹豫地正面迎击",
+    "冷静观察，寻找破绽",
+    "暂时撤退，保留实力",
+    "设下陷阱，诱敌深入"
   ];
+}
+
+const QUESTIONS = [];
+for (let i = 0; i < questionTemplates.length && i < 64; i++) {
+  const text = questionTemplates[i];
+  const opts = generateOptionsForQuestion(text, i);
   QUESTIONS.push({ text, opts });
+}
+// 确保64道题
+while(QUESTIONS.length < 64) {
+  QUESTIONS.push({ text: "你如何面对未知的恐惧？", opts: ["迎难而上","迂回试探","逃避躲藏","利用恐惧"] });
 }
 
 // ======================= 权重分配：每道题给不同怪物加分，确保120个都能出现 =======================
 function addWeights(scoreMap, qIndex, optIndex) {
-  // 使用伪随机但确定性的分配：每个选项影响约6-8个怪物
   const monsterCount = MONSTER_KEYS.length;
   const seed = (qIndex * 131 + optIndex * 253) % monsterCount;
   for (let i = 0; i < 8; i++) {
@@ -587,13 +1097,11 @@ function addWeights(scoreMap, qIndex, optIndex) {
   }
   // 额外根据选项倾向增加某些类型
   if (optIndex === 0) {
-    // 攻击型
     const aggressive = [0,2,4,6,8,10];
     for (let a of aggressive) {
       if (a < monsterCount) scoreMap[MONSTER_KEYS[a]] += 1;
     }
   } else if (optIndex === 3) {
-    // 诡计型
     const tricky = [5,7,9,11,13,15];
     for (let t of tricky) {
       if (t < monsterCount) scoreMap[MONSTER_KEYS[t]] += 1;
@@ -688,10 +1196,7 @@ function showResult() {
   document.getElementById('resultName').innerHTML = data.name;
   document.getElementById('resultDesc').innerHTML = data.desc;
   document.getElementById('resultTags').innerHTML = data.tags.split('·').map(t => `<span class="tag">${t.trim()}</span>`).join('');
-  // 图片：使用emoji替代，避免加载失败
-  const emojiMap = ["🐉","👹","👻","🐺","🕷️","🦇","🐍","🦂","🌿","🔥","❄️","⚡","💀","👁️","🧠","🩸"];
-  const emoji = emojiMap[parseInt(monsterKey.substring(1)) % emojiMap.length];
-  document.getElementById('resultMonsterImg').innerHTML = `<div style="font-size:70px; text-align:center; background:#2a2a34; border-radius:50%; width:100px; height:100px; display:flex; align-items:center; justify-content:center; margin:0 auto;">${emoji}</div>`;
+  document.getElementById('resultMonsterImg').innerHTML = `<div>${data.emoji}</div>`;
   quizPanel.style.display = 'none';
   resultPanel.style.display = 'block';
 }
